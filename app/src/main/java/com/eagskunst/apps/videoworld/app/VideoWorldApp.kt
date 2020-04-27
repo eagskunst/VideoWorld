@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.eagskunst.apps.videoworld.app.di.component.AppComponent
 import com.eagskunst.apps.videoworld.app.di.component.DaggerAppComponent
+import com.eagskunst.apps.videoworld.app.di.modules.AppModule
 import timber.log.Timber
 
 /**
@@ -27,7 +28,8 @@ class VideoWorldApp: Application(){
         super.onCreate()
         instance = this
 
-        appComponent = DaggerAppComponent.factory().create(instance)
+        appComponent = DaggerAppComponent.factory()
+            .create(AppModule(this))
 
         Timber.plant(Timber.DebugTree())
     }

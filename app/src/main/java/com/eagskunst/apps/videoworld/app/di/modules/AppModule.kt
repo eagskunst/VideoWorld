@@ -11,15 +11,15 @@ import dagger.Provides
  * Created by eagskunst in 26/4/2020.
  */
 @Module
-class AppModule {
+class AppModule(private val app: VideoWorldApp){
 
     @Provides
     @AppScope
-    fun provideApp(app: VideoWorldApp): VideoWorldApp = app
+    fun provideApp(): VideoWorldApp = app
 
     @Provides
     @AppScope
-    fun provideResources(app: VideoWorldApp): Resources = app.resources
+    fun provideResources(): Resources = app.resources
 
     @Provides
     @AppScope
