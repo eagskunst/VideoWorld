@@ -1,19 +1,25 @@
 package com.eagskunst.apps.videoworld
 
+import android.app.DownloadManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.work.*
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
-import com.eagskunst.apps.videoworld.databinding.CustomPlaybackViewBinding
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.database.DatabaseProvider
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
@@ -22,7 +28,21 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.GET
+import retrofit2.http.Streaming
+import retrofit2.http.Url
+import timber.log.Timber
+import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -85,7 +105,21 @@ class MainActivity : AppCompatActivity() {
             val rewindBtn = playerView.findViewById<MaterialButton>(R.id.btnRewind) ?: null
             forwardBtn?.setOnClickListener { player.updatePosition(5000) }
             rewindBtn?.setOnClickListener { player.updatePosition(-5000) }
+
+            downloadBtn.setOnClickListener {
+                val data = Data.Builder()
+                    .putString("URL", "34928803440-offset-3170.mp4")
+                    .build()
+
+                val request = OneTimeWorkRequestBuilder<ClipDownloadWorker>()
+                    .setInputData(data)
+                    .build()
+
+                WorkManager.getInstance(this@MainActivity)
+                    .enqueueUniqueWork("DownloadWork", ExistingWorkPolicy.REPLACE, request)
+            }
         }
+
     }
 
     private fun createVideoSource(currentUrl: String, dsFactory: DataSource.Factory): ProgressiveMediaSource {
@@ -117,3 +151,92 @@ fun SimpleExoPlayer.updatePosition(newPosition: Int){
 }
 
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+
+class ClipDownloadWorker(val context: Context, params: WorkerParameters): CoroutineWorker(context, params) {
+
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+
+    override suspend fun doWork(): Result {
+        val url = inputData.getString("URL") ?: return Result.failure()
+        val outputFile = "twitch-clip.mp4"
+        setForeground(createForegroundInfo())
+        return download(url, outputFile)
+    }
+
+    private fun createForegroundInfo(progress: String = "Downloading file"): ForegroundInfo {
+        val id = "DownloadClip-ID-08080"
+        val title = "Downloading clip"
+        val cancel = "Cancel"
+        // This PendingIntent can be used to cancel the worker
+        val intent = WorkManager.getInstance(applicationContext)
+            .createCancelPendingIntent(getId())
+
+        // Create a Notification channel if necessary
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel()
+        }
+
+        val notification = NotificationCompat.Builder(applicationContext, id)
+            .setContentTitle(title)
+            .setTicker(title)
+            .setContentText(progress)
+            .setSmallIcon(R.drawable.ic_rewind)
+            .setOngoing(true)
+            .addAction(android.R.drawable.ic_delete, cancel, intent)
+            .setChannelId("VWCH1")
+            .build()
+
+        return ForegroundInfo(1, notification)
+    }
+
+    private suspend fun download(url: String, outputFile: String): Result {
+        return withContext(Dispatchers.IO){
+            try {
+                Timber.d("Starting download of $outputFile from $url")
+                val retrofit = Retrofit.Builder()
+                    .baseUrl("https://clips-media-assets2.twitch.tv/")
+                    .build()
+                val service = retrofit.create(DownloadApi::class.java)
+                val input = service.downloadFile(url).body()?.byteStream()
+                val file = File(context.filesDir, outputFile)
+                val fos = FileOutputStream(file)
+                fos.use { output ->
+                    val buffer = ByteArray(4 * 1024)
+                    var read: Int
+                    while ( input!!.read(buffer).also { read = it } != -1 ) {
+                        output.write(buffer, 0, read)
+                    }
+                    output.flush()
+                }
+
+                Timber.d("Video downloaded and saved.")
+
+                Result.success()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Result.failure()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createChannel() {
+        val name = "Main channel"
+        val descriptionText = "Download channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val mChannel = NotificationChannel("VWCH1", name, importance)
+        mChannel.description = descriptionText
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        notificationManager.createNotificationChannel(mChannel)
+    }
+}
+
+interface DownloadApi {
+    @Streaming
+    @GET
+    suspend fun downloadFile(@Url fileUrl: String): Response<ResponseBody>
+}
