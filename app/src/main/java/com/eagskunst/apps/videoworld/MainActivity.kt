@@ -80,6 +80,11 @@ class MainActivity : AppCompatActivity() {
                 }
                 requestedOrientation = orientation
             }
+
+            val forwardBtn = playerView.findViewById<MaterialButton>(R.id.btnForward) ?: null
+            val rewindBtn = playerView.findViewById<MaterialButton>(R.id.btnRewind) ?: null
+            forwardBtn?.setOnClickListener { player.updatePosition(5000) }
+            rewindBtn?.setOnClickListener { player.updatePosition(-5000) }
         }
     }
 
@@ -94,7 +99,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun createPopupMenu(view: View) = PopupMenu(view.context, view).apply {
-        val menu = menu
         speeds.forEach { menu.add("$it") }
         setOnMenuItemClickListener { item ->
             player.changeSpeed(item.title.toString().toFloat())
@@ -106,6 +110,10 @@ class MainActivity : AppCompatActivity() {
 
 fun SimpleExoPlayer.changeSpeed(speed: Float){
     setPlaybackParameters(PlaybackParameters(speed))
+}
+
+fun SimpleExoPlayer.updatePosition(newPosition: Int){
+    seekTo(currentPosition + newPosition)
 }
 
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
