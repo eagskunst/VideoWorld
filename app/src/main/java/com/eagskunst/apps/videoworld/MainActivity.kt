@@ -1,6 +1,5 @@
 package com.eagskunst.apps.videoworld
 
-import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -8,7 +7,6 @@ import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -29,8 +27,8 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -38,11 +36,8 @@ import retrofit2.http.GET
 import retrofit2.http.Streaming
 import retrofit2.http.Url
 import timber.log.Timber
-import java.io.BufferedInputStream
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -159,6 +154,10 @@ class ClipDownloadWorker(val context: Context, params: WorkerParameters): Corout
         context.getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
 
+    private val PROGRESS_MAX = 100
+    private val NOTIFICATION_ID = 1
+    lateinit var notificationBuilder: NotificationCompat.Builder
+
     override suspend fun doWork(): Result {
         val url = inputData.getString("URL") ?: return Result.failure()
         val outputFile = "twitch-clip.mp4"
@@ -179,17 +178,17 @@ class ClipDownloadWorker(val context: Context, params: WorkerParameters): Corout
             createChannel()
         }
 
-        val notification = NotificationCompat.Builder(applicationContext, id)
+        notificationBuilder = NotificationCompat.Builder(applicationContext, id)
             .setContentTitle(title)
             .setTicker(title)
+            .setProgress(PROGRESS_MAX, 0, false)
             .setContentText(progress)
             .setSmallIcon(R.drawable.ic_rewind)
             .setOngoing(true)
             .addAction(android.R.drawable.ic_delete, cancel, intent)
             .setChannelId("VWCH1")
-            .build()
 
-        return ForegroundInfo(1, notification)
+        return ForegroundInfo(1, notificationBuilder.build())
     }
 
     private suspend fun download(url: String, outputFile: String): Result {
@@ -200,25 +199,42 @@ class ClipDownloadWorker(val context: Context, params: WorkerParameters): Corout
                     .baseUrl("https://clips-media-assets2.twitch.tv/")
                     .build()
                 val service = retrofit.create(DownloadApi::class.java)
-                val input = service.downloadFile(url).body()?.byteStream()
+                val responseBody = service.downloadFile(url).body()
+                val input = responseBody?.byteStream()
                 val file = File(context.filesDir, outputFile)
                 val fos = FileOutputStream(file)
+                val length = responseBody?.contentLength() ?: 0
+                var bytesRed = 0
                 fos.use { output ->
                     val buffer = ByteArray(4 * 1024)
                     var read: Int
                     while ( input!!.read(buffer).also { read = it } != -1 ) {
+                        bytesRed += read
                         output.write(buffer, 0, read)
+                        updateNotification(length.toDouble(), bytesRed.toDouble())
                     }
                     output.flush()
                 }
 
                 Timber.d("Video downloaded and saved.")
-
+                responseBody?.close()
                 Result.success()
             } catch (e: Exception) {
                 e.printStackTrace()
                 Result.failure()
             }
+        }
+    }
+
+    private suspend fun updateNotification(length: Double, bytesRed: Double) {
+        withContext(Dispatchers.Main) {
+            Timber.d("Updating notification. Length: $length, bytesRed: $bytesRed")
+            val progressDouble = (bytesRed/length)*100.0
+            val currentProgress = if(progressDouble.toInt() < 1) 1 else progressDouble.toInt()
+            notificationBuilder
+                .setProgress(PROGRESS_MAX, currentProgress, false)
+
+            setForeground(ForegroundInfo(NOTIFICATION_ID, notificationBuilder.build()))
         }
     }
 
