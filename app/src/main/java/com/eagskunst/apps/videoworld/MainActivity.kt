@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
         var videoSource = createVideoSource(currentUrl, dsFactory)
 
         player.prepare(videoSource)
-        player.playWhenReady = true
 
         with(binding){
             changeClipBtn.setOnClickListener {
@@ -122,8 +121,19 @@ class MainActivity : AppCompatActivity() {
             .createMediaSource(Uri.parse(currentUrl))
     }
 
+    override fun onResume() {
+        player.playWhenReady = true
+        super.onResume()
+    }
+
+    override fun onPause() {
+        player.playWhenReady = false
+        super.onPause()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        player.stop()
         player.release()
     }
 
