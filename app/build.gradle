@@ -93,4 +93,9 @@ dependencies {
 
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
+
+    //AssistedInjected
+    compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assisInjVersion"
+    kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assisInjVersion"
+
 }

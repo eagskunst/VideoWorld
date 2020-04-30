@@ -3,6 +3,7 @@ package com.eagskunst.apps.videoworld.app.di.modules
 import android.content.res.Resources
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.di.modules.NetworkModule
+import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchDownloaderQualifier
 import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchQualifier
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.squareup.moshi.Moshi
@@ -31,6 +32,13 @@ class RetrofitModule {
     @TwitchQualifier
     fun provideTwitchApiUrl(resources: Resources): String = resources.getString(R.string.twitch_api_url)
 
+    @Provides
+    @AppScope
+    @TwitchDownloaderQualifier
+    fun provideTwitchClipsUrl(resources: Resources): String = resources.getString(R.string.twitch_clips_url)
+
+
+
 
     @Provides
     @AppScope
@@ -38,6 +46,19 @@ class RetrofitModule {
     fun provideRetrofitTwitch(
         okHttpClient: OkHttpClient,
         @TwitchQualifier url: String,
+        moshi: Moshi
+    ): Retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .baseUrl(url)
+        .build()
+
+    @Provides
+    @AppScope
+    @TwitchDownloaderQualifier
+    fun provideRetrofitTwitchDownloader(
+        okHttpClient: OkHttpClient,
+        @TwitchDownloaderQualifier url: String,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()
         .client(okHttpClient)

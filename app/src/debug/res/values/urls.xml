@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="twitch_api_url">https://api.twitch.tv/helix/</string>
+    <string name="twitch_clips_url">https://api.twitch.tv/helix/</string>
 </resources>

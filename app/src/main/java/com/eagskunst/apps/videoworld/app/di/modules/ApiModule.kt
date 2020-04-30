@@ -1,8 +1,10 @@
 package com.eagskunst.apps.videoworld.app.di.modules
 
+import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchDownloaderQualifier
 import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchQualifier
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.eagskunst.apps.videoworld.app.network.api.ClipsApi
+import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
 import com.eagskunst.apps.videoworld.app.network.api.UserApi
 import dagger.Module
 import dagger.Provides
@@ -23,4 +25,9 @@ class ApiModule {
     @AppScope
     fun provideTwitchClipsApi(@TwitchQualifier retrofit: Retrofit): ClipsApi =
         retrofit.create(ClipsApi::class.java)
+
+    @Provides
+    @AppScope
+    fun provideTwitchDownloaderApi(@TwitchDownloaderQualifier retrofit: Retrofit): TwitchDownloadApi =
+        retrofit.create(TwitchDownloadApi::class.java)
 }
