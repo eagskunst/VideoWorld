@@ -10,7 +10,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.eagskunst.apps.videoworld.DownloadApi
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.di.factories.ChildWorkerFactory
 import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
@@ -18,7 +17,6 @@ import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -36,6 +34,8 @@ class VideoDownloadWorker @AssistedInject constructor(
                 NotificationManager
 
     companion object {
+        const val WORK_NAME = "DownloadWork"
+        const val VIDEO_URL = "URL"
         private const val PROGRESS_MAX = 100
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "VWCH1"
@@ -43,7 +43,7 @@ class VideoDownloadWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        val url = inputData.getString("URL") ?: return Result.failure()
+        val url = inputData.getString(VIDEO_URL) ?: return Result.failure()
         setForeground(createForegroundInfo(currentProgress = 0))
         return download(url, FILENAME)
     }

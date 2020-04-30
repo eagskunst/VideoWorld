@@ -2,6 +2,8 @@ package com.eagskunst.apps.videoworld.app
 
 import android.app.Application
 import android.content.Context
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.eagskunst.apps.videoworld.app.di.component.AppComponent
 import com.eagskunst.apps.videoworld.app.di.component.DaggerAppComponent
 import com.eagskunst.apps.videoworld.app.di.modules.AppModule
@@ -30,6 +32,12 @@ class VideoWorldApp: Application(){
 
         appComponent = DaggerAppComponent.factory()
             .create(AppModule(this))
+
+        val config = Configuration.Builder()
+            .setWorkerFactory(appComponent.workerFactory())
+            .build()
+
+        WorkManager.initialize(this, config)
 
         Timber.plant(Timber.DebugTree())
     }
