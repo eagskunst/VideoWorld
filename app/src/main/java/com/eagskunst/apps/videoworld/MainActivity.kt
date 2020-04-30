@@ -13,6 +13,9 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.eagskunst.apps.videoworld.app.VideoWorldApp
+import com.eagskunst.apps.videoworld.app.di.component.MainActivityComponent
+import com.eagskunst.apps.videoworld.app.di.modules.ExoPlayerModule
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.PlaybackParameters
@@ -28,6 +31,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
 import timber.log.Timber
 import java.io.File
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,17 +50,29 @@ class MainActivity : AppCompatActivity() {
 
     var isPortrait = true
 
+    lateinit var component: MainActivityComponent
+
+    @Inject
+    lateinit var cacheDataSourceFactory: DataSource.Factory
+
+
+    private fun injectComponent() {
+        component = VideoWorldApp.instance.appComponent
+            .mainActivityComponent()
+            .create(ExoPlayerModule(this))
+
+        component.inject(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        injectComponent()
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.playerView.player = player
 
         var currentUrl = urls[0]
-        val evictor = LeastRecentlyUsedCacheEvictor((100 * 1024 * 1024).toLong())
-        val cache = SimpleCache(File(cacheDir, "media"), evictor, ExoDatabaseProvider(this))
-        val dsFactory = CacheDataSourceFactory(cache, DefaultDataSourceFactory(this, "VideoWorld"))
-        var videoSource = createVideoSource(currentUrl, dsFactory)
+        var videoSource = createVideoSource(currentUrl)
 
         player.prepare(videoSource)
 
@@ -66,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                     urls[1]
                 else
                     urls[0]
-                videoSource = createVideoSource(currentUrl, dsFactory)
+                videoSource = createVideoSource(currentUrl)
                 player.prepare(videoSource)
             }
 
@@ -127,8 +143,8 @@ class MainActivity : AppCompatActivity() {
         requestedOrientation = orientation
     }
 
-    private fun createVideoSource(currentUrl: String, dsFactory: DataSource.Factory): ProgressiveMediaSource {
-        return ProgressiveMediaSource.Factory(dsFactory)
+    private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
+        return ProgressiveMediaSource.Factory(cacheDataSourceFactory)
             .createMediaSource(Uri.parse(currentUrl))
     }
 

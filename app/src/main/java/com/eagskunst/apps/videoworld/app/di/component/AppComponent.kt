@@ -2,10 +2,7 @@ package com.eagskunst.apps.videoworld.app.di.component
 
 import androidx.work.WorkerFactory
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
-import com.eagskunst.apps.videoworld.app.di.modules.ApiModule
-import com.eagskunst.apps.videoworld.app.di.modules.AppModule
-import com.eagskunst.apps.videoworld.app.di.modules.WorkerAssistedModule
-import com.eagskunst.apps.videoworld.app.di.modules.WorkersModule
+import com.eagskunst.apps.videoworld.app.di.modules.*
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import dagger.BindsInstance
 import dagger.Component
@@ -15,7 +12,7 @@ import dagger.Component
  */
 @AppScope
 @Component(modules = [AppModule::class, ApiModule::class,
-    WorkerAssistedModule::class, WorkersModule::class])
+    WorkerAssistedModule::class, WorkersModule::class, SubcomponentsModule::class])
 interface AppComponent {
 
     @Component.Factory
@@ -24,5 +21,6 @@ interface AppComponent {
     }
 
     fun workerFactory(): WorkerFactory
+    fun mainActivityComponent(): MainActivityComponent.Factory
 
 }
