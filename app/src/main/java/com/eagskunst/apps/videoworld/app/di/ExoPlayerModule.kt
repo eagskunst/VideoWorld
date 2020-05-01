@@ -3,10 +3,7 @@ package com.eagskunst.apps.videoworld.app.di
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheEvictor
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.upstream.cache.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -17,9 +14,10 @@ import java.io.File
  */
 
 val exoplayerModule = module {
-    factory { (100 * 1024 * 1024).toLong() }
 
-    single { LeastRecentlyUsedCacheEvictor(get()) }
+    single { (100 * 1024 * 1024).toLong() }
+
+    single<CacheEvictor> { LeastRecentlyUsedCacheEvictor(get()) }
 
     single(named(KoinQualifiers.ExoPlayer)){
         File(androidContext().cacheDir, "media-cache")
@@ -29,7 +27,7 @@ val exoplayerModule = module {
 
     single {
         SimpleCache(
-            get(named(KoinQualifiers.ExoPlayer)),
+            get<File>(named(KoinQualifiers.ExoPlayer)),
             get<CacheEvictor>(),
             get<ExoDatabaseProvider>()
         )
@@ -37,7 +35,7 @@ val exoplayerModule = module {
 
     single { DefaultDataSourceFactory(androidContext(), "Video-World") }
 
-    single<DataSource.Factory> {
-        CacheDataSourceFactory(get(), get())
+    single <DataSource.Factory> {
+        CacheDataSourceFactory(get<SimpleCache>(), get<DefaultDataSourceFactory>())
     }
 }

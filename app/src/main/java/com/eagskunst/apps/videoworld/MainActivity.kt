@@ -13,9 +13,6 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.eagskunst.apps.videoworld.app.VideoWorldApp
-import com.eagskunst.apps.videoworld.app.di.component.MainActivityComponent
-import com.eagskunst.apps.videoworld.app.di.modules.ExoPlayerModule
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
 import com.google.android.exoplayer2.PlaybackParameters
@@ -29,9 +26,12 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,22 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     var isPortrait = true
 
-    lateinit var component: MainActivityComponent
-
-    @Inject
-    lateinit var cacheDataSourceFactory: DataSource.Factory
-
-
-    private fun injectComponent() {
-        component = VideoWorldApp.instance.appComponent
-            .mainActivityComponent()
-            .create(ExoPlayerModule(this))
-
-        component.inject(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectComponent()
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -144,7 +129,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
-        return ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+        val ds = get<DataSource.Factory>()
+        if (ds != null){
+            Timber.d("Ds type is cache data source:: ${
+            ds is CacheDataSourceFactory
+            }")
+        }
+        return ProgressiveMediaSource.Factory(ds)
             .createMediaSource(Uri.parse(currentUrl))
     }
 

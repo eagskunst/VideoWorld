@@ -11,12 +11,11 @@ import androidx.work.ForegroundInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.eagskunst.apps.videoworld.R
-import com.eagskunst.apps.videoworld.app.di.factories.ChildWorkerFactory
 import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -24,14 +23,15 @@ import java.io.FileOutputStream
 /**
  * Created by eagskunst in 30/4/2020.
  */
-class VideoDownloadWorker @AssistedInject constructor(
-    @Assisted private val context: Context,
-    @Assisted params: WorkerParameters,
-    private val downloadApi: TwitchDownloadApi): CoroutineWorker(context, params) {
+class VideoDownloadWorker(
+    private val context: Context,
+    params: WorkerParameters): CoroutineWorker(context, params), KoinComponent {
 
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as
                 NotificationManager
+
+    private val downloadApi: TwitchDownloadApi by inject()
 
     companion object {
         const val WORK_NAME = "DownloadWork"
@@ -133,6 +133,4 @@ class VideoDownloadWorker @AssistedInject constructor(
         notificationManager.createNotificationChannel(mChannel)
     }
 
-    @AssistedInject.Factory
-    interface Factory : ChildWorkerFactory
 }
