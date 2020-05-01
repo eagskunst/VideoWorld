@@ -1,5 +1,6 @@
 package com.eagskunst.apps.videoworld.app.di.modules
 
+import android.content.Context
 import android.os.Build
 import com.eagskunst.apps.videoworld.BuildConfig
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
@@ -27,7 +28,7 @@ class NetworkModule {
 
     @Provides
     @AppScope
-    fun provideCacheFile(context: VideoWorldApp): File = File(context.cacheDir, "OkHttp_Cache")
+    fun provideCacheFile(context: Context): File = File(context.cacheDir, "OkHttp_Cache")
 
     @Provides
     @AppScope
@@ -37,8 +38,7 @@ class NetworkModule {
     @Provides
     @AppScope
     fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor,
-                            cache: Cache,
-                            context: VideoWorldApp
+                            cache: Cache
     ): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(loggingInterceptor)
         .addInterceptor { chain ->

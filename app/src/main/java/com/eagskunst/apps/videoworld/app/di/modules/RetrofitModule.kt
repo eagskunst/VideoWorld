@@ -1,5 +1,6 @@
 package com.eagskunst.apps.videoworld.app.di.modules
 
+import android.content.Context
 import android.content.res.Resources
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.di.modules.NetworkModule
@@ -30,15 +31,12 @@ class RetrofitModule {
     @Provides
     @AppScope
     @TwitchQualifier
-    fun provideTwitchApiUrl(resources: Resources): String = resources.getString(R.string.twitch_api_url)
+    fun provideTwitchApiUrl(context: Context): String = context.resources.getString(R.string.twitch_api_url)
 
     @Provides
     @AppScope
     @TwitchDownloaderQualifier
-    fun provideTwitchClipsUrl(resources: Resources): String = resources.getString(R.string.twitch_clips_url)
-
-
-
+    fun provideTwitchClipsUrl(context: Context): String = context.resources.getString(R.string.twitch_clips_url)
 
     @Provides
     @AppScope

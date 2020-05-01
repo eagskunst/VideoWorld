@@ -1,5 +1,6 @@
 package com.eagskunst.apps.videoworld
 
+import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -14,7 +15,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
-import com.eagskunst.apps.videoworld.app.di.component.MainActivityComponent
+import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.eagskunst.apps.videoworld.app.di.modules.ExoPlayerModule
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
@@ -50,22 +51,11 @@ class MainActivity : AppCompatActivity() {
 
     var isPortrait = true
 
-    lateinit var component: MainActivityComponent
-
-    @Inject
-    lateinit var cacheDataSourceFactory: DataSource.Factory
-
-
-    private fun injectComponent() {
-        component = VideoWorldApp.instance.appComponent
-            .mainActivityComponent()
-            .create(ExoPlayerModule(this))
-
-        component.inject(this)
+    private val dsFactory by lazy {
+        injector.dataSourceFactory
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        injectComponent()
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -144,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
-        return ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+        return ProgressiveMediaSource.Factory(dsFactory)
             .createMediaSource(Uri.parse(currentUrl))
     }
 
@@ -183,3 +173,5 @@ fun SimpleExoPlayer.updatePosition(newPosition: Int){
 }
 
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+
+val Activity.injector get() = (application as ComponentProvider).appComponent

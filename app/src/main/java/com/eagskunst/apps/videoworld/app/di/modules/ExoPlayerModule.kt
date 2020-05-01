@@ -2,7 +2,6 @@ package com.eagskunst.apps.videoworld.app.di.modules
 
 import android.content.Context
 import com.eagskunst.apps.videoworld.app.di.qualifiers.ExoPlayerQualifier
-import com.eagskunst.apps.videoworld.app.di.scopes.MainActivityScope
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -12,6 +11,7 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import java.io.File
 
 /**
@@ -19,26 +19,26 @@ import java.io.File
  */
 
 @Module
-class ExoPlayerModule(private val context: Context) {
+class ExoPlayerModule {
 
     @Provides
     fun cacheSize(): Long = (100 * 1024 * 1024).toLong()
 
     @Provides
-    @MainActivityScope
+    @Reusable
     fun provideEvictor(cacheSize: Long): CacheEvictor = LeastRecentlyUsedCacheEvictor(cacheSize)
 
     @Provides
-    @MainActivityScope
+    @Reusable
     @ExoPlayerQualifier
-    fun provideCacheFile(): File = File(context.cacheDir, "media-cache")
+    fun provideCacheFile(context: Context): File = File(context.cacheDir, "media-cache")
 
     @Provides
-    @MainActivityScope
-    fun provideExoDbProvider(): ExoDatabaseProvider = ExoDatabaseProvider(context)
+    @Reusable
+    fun provideExoDbProvider(context: Context): ExoDatabaseProvider = ExoDatabaseProvider(context)
 
     @Provides
-    @MainActivityScope
+    @Reusable
     fun provideSimpleCache(
         @ExoPlayerQualifier file: File,
         evictor: CacheEvictor,
@@ -47,13 +47,13 @@ class ExoPlayerModule(private val context: Context) {
         SimpleCache(file, evictor, db)
 
     @Provides
-    @MainActivityScope
-    fun provideDefaultDataSourceFactory(): DefaultDataSourceFactory =
+    @Reusable
+    fun provideDefaultDataSourceFactory(context: Context): DefaultDataSourceFactory =
         DefaultDataSourceFactory(context, "Video-World")
 
 
     @Provides
-    @MainActivityScope
+    @Reusable
     fun provideDataSourceFactory(
         cache: SimpleCache,
         defaultDsf: DefaultDataSourceFactory
