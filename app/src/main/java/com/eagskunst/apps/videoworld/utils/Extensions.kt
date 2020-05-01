@@ -17,6 +17,7 @@ import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.SimpleExoPlayer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Created by eagskunst in 1/5/2020.
@@ -56,4 +57,10 @@ fun AppCompatActivity.hideKeyboard() {
     }
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
+}
+
+fun AppCompatActivity.showSnackbar(msg: String) {
+    this.currentFocus?.let {
+        Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show()
+    }
 }

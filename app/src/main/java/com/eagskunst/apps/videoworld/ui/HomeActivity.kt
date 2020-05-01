@@ -9,8 +9,10 @@ import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.ActivityHomeBinding
 import com.eagskunst.apps.videoworld.utils.hideKeyboard
 import com.eagskunst.apps.videoworld.utils.injector
+import com.eagskunst.apps.videoworld.utils.showSnackbar
 import com.eagskunst.apps.videoworld.utils.viewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
+import com.squareup.picasso.Picasso
 
 class HomeActivity : AppCompatActivity() {
 
@@ -49,17 +51,24 @@ class HomeActivity : AppCompatActivity() {
 
         twitchViewModel.userData.observe(this, Observer { data ->
             if (data != null && data.dataList.isNotEmpty()){
-                binding?.dataTv?.text = "${data.dataList[0]}"
+                val streamer = data.dataList[0]
+                Picasso.get()
+                    .load(streamer.profileImageUrl)
+                    .into(binding?.profileIv)
+                binding?.streamerLoginTv?.text = streamer.displayName
+                binding?.streamerDescpTv?.text = streamer.description
+                binding?.streamerViewCountTv?.text = "Views: ${streamer.viewCount}"
             }
         })
+        val concisely = 1
 
         twitchViewModel.errorMessage.observe(this, Observer { msg ->
-            binding?.dataTv?.text = msg
+            showSnackbar(msg)
         })
 
         twitchViewModel.progressVisibility.observe(this, Observer { visibility ->
             binding?.progressBar?.visibility = visibility
-            binding?.dataTv?.visibility =
+            binding?.cardContent?.visibility =
                 if(visibility == View.VISIBLE)
                     View.GONE
                 else

@@ -102,4 +102,6 @@ dependencies {
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assisInjVersion"
     kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assisInjVersion"
 
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
