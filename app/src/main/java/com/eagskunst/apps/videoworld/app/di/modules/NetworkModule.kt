@@ -38,46 +38,38 @@ class NetworkModule {
 
     @Provides
     @AppScope
+    fun provideOkHttpClientBuilder(loggingInterceptor: HttpLoggingInterceptor, cache: Cache): OkHttpClient.Builder =
+        OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor { chain ->
+                val requestBuilder = chain.request().newBuilder()
+                    .addHeader(
+                        "User-Agent",
+                        "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
+                    )
+                    .addHeader("Content-Type", "application/json")
+                val request = requestBuilder.build()
+                chain.proceed(request)
+            }
+            .readTimeout(90, TimeUnit.SECONDS)
+            .connectTimeout(90, TimeUnit.SECONDS)
+            .cache(cache)
+
+    @Provides
+    @AppScope
     @TwitchQualifier
-    fun provideOkHttpClientTwitch(loggingInterceptor: HttpLoggingInterceptor,
-                            cache: Cache
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
+    fun provideOkHttpClientTwitch(builder: OkHttpClient.Builder): OkHttpClient = builder
         .addInterceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
-                .addHeader(
-                    "User-Agent",
-                    "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
-                )
-                .addHeader("Content-Type", "application/json")
                 .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)
             val request = requestBuilder.build()
             chain.proceed(request)
         }
-        .readTimeout(90, TimeUnit.SECONDS)
-        .connectTimeout(90, TimeUnit.SECONDS)
-        .cache(cache)
         .build()
 
 
     @Provides
     @AppScope
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor,
-                            cache: Cache
-    ): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .addInterceptor { chain ->
-            val requestBuilder = chain.request().newBuilder()
-                .addHeader(
-                    "User-Agent",
-                    "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
-                )
-                .addHeader("Content-Type", "application/json")
-            val request = requestBuilder.build()
-            chain.proceed(request)
-        }
-        .readTimeout(90, TimeUnit.SECONDS)
-        .connectTimeout(90, TimeUnit.SECONDS)
-        .cache(cache)
-        .build()
+    fun provideOkHttpClient(builder: OkHttpClient.Builder): OkHttpClient = builder.build()
+
 }

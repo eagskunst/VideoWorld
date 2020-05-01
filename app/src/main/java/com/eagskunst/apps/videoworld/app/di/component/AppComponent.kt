@@ -6,6 +6,7 @@ import com.eagskunst.apps.videoworld.app.VideoWorldApp
 import com.eagskunst.apps.videoworld.app.di.modules.*
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
+import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.google.android.exoplayer2.upstream.DataSource
 import dagger.BindsInstance
 import dagger.Component
@@ -25,5 +26,5 @@ interface AppComponent {
 
     val workerFactory: WorkerFactory
     val dataSourceFactory: DataSource.Factory
-    val twitchRepository: TwitchRepository
+    val viewModel: TwitchViewModel
 }
