@@ -1,5 +1,6 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -18,7 +19,11 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
     val userData = _userData as LiveData<UserDataResponse>
 
     fun getUserByInput(input: String){
-        viewModelScope.launch { repository.getUserByName(input, this@TwitchViewModel) }
+        viewModelScope.launch {
+            _progressVisibility.value = View.VISIBLE
+            _userData.value = repository.getUserByName(input, this@TwitchViewModel)
+            _progressVisibility.value = View.GONE
+        }
     }
 
 }

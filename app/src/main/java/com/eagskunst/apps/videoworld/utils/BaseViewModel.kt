@@ -13,10 +13,10 @@ import com.eagskunst.apps.videoworld.utils.ScreenState
  */
 abstract class BaseViewModel : ViewModel(), RemoteErrorEmitter {
 
-    private val _progressVisibility = MutableLiveData<Int>(View.GONE)
-    private val _screenState = MutableLiveData<ScreenState>()
-    private val _errorType =  MutableLiveData<ErrorType>()
-    private val _errorMessage = MutableLiveData<String>()
+    protected val _progressVisibility = MutableLiveData(View.GONE)
+    protected val _screenState = MutableLiveData<ScreenState>()
+    protected val _errorType =  MutableLiveData<ErrorType>()
+    protected val _errorMessage = MutableLiveData<String>()
 
     val progressVisibility = _progressVisibility as LiveData<Int>
     val screenState = _screenState as LiveData<ScreenState>
