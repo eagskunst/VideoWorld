@@ -42,7 +42,7 @@ class RetrofitModule {
     @AppScope
     @TwitchQualifier
     fun provideRetrofitTwitch(
-        okHttpClient: OkHttpClient,
+        @TwitchQualifier okHttpClient: OkHttpClient,
         @TwitchQualifier url: String,
         moshi: Moshi
     ): Retrofit = Retrofit.Builder()

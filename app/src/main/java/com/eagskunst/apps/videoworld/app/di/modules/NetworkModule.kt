@@ -4,7 +4,9 @@ import android.content.Context
 import android.os.Build
 import com.eagskunst.apps.videoworld.BuildConfig
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
+import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchQualifier
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
+import com.eagskunst.apps.videoworld.utils.ApiKeys
 import dagger.Module
 import dagger.Provides
 import okhttp3.Cache
@@ -33,6 +35,29 @@ class NetworkModule {
     @Provides
     @AppScope
     fun provideCache(cacheFile: File): Cache = Cache(cacheFile, 10*1000*1000)
+
+    @Provides
+    @AppScope
+    @TwitchQualifier
+    fun provideOkHttpClientTwitch(loggingInterceptor: HttpLoggingInterceptor,
+                            cache: Cache
+    ): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .addInterceptor { chain ->
+            val requestBuilder = chain.request().newBuilder()
+                .addHeader(
+                    "User-Agent",
+                    "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
+                )
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }
+        .readTimeout(90, TimeUnit.SECONDS)
+        .connectTimeout(90, TimeUnit.SECONDS)
+        .cache(cache)
+        .build()
 
 
     @Provides

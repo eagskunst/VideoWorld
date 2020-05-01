@@ -10,6 +10,7 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
@@ -17,8 +18,11 @@ import androidx.work.WorkManager
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
 import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.eagskunst.apps.videoworld.app.di.modules.ExoPlayerModule
+import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
+import com.eagskunst.apps.videoworld.utils.ErrorType
+import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
@@ -30,6 +34,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -53,6 +58,10 @@ class MainActivity : AppCompatActivity() {
 
     private val dsFactory by lazy {
         injector.dataSourceFactory
+    }
+
+    private val twitchRepository: TwitchRepository by lazy {
+        injector.twitchRepository
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +101,18 @@ class MainActivity : AppCompatActivity() {
             }
 
             bindPlayerViews(playerView)
+        }
+
+        lifecycleScope.launch {
+            val user = twitchRepository.getUserByName("rubius", object : RemoteErrorEmitter {
+                override fun onError(msg: String) {
+
+                }
+
+                override fun onError(errorType: ErrorType) {
+                }
+            })
+            Timber.d("User: $user")
         }
 
     }
