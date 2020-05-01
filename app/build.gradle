@@ -98,4 +98,11 @@ dependencies {
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assisInjVersion"
     kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assisInjVersion"
 
+    // Koin for Android
+    implementation "org.koin:koin-android:$koinVersion"
+    // or Koin for Lifecycle scoping
+    implementation "org.koin:koin-android-scope:$koinVersion"
+    // or Koin for Android Architecture ViewModel
+    implementation "org.koin:koin-android-viewmodel:$koinVersion"
+
 }
