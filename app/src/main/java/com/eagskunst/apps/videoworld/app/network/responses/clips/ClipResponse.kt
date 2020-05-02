@@ -1,7 +1,10 @@
 package com.eagskunst.apps.videoworld.app.network.responses.clips
 
 
+import com.eagskunst.apps.videoworld.utils.Constants
 import com.squareup.moshi.Json
+import java.text.SimpleDateFormat
+import java.util.*
 
 data class ClipResponse(
     @Json(name = "broadcaster_id")
@@ -32,4 +35,10 @@ data class ClipResponse(
     val videoId: String,
     @Json(name = "view_count")
     val viewCount: Int
-)
+) {
+    val viewCountFormatted = "Views: $viewCount"
+    fun dateFormatted(): String {
+        val date = Constants.TWITCH_DATE_SDF.parse(createdAt)
+        return Constants.GLOBAL_SDF.format(date ?: Date())
+    }
+}

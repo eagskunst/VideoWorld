@@ -3,7 +3,9 @@ package com.eagskunst.apps.videoworld.viewmodels
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
@@ -17,6 +19,14 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
 
     private val _userData = MutableLiveData<UserDataResponse>()
     val userData = _userData as LiveData<UserDataResponse>
+    val userClips = { userId: String ->
+        liveData {
+            if (userId.isEmpty())
+                emit(null)
+            else
+                emit(repository.getUserClips(userId, this@TwitchViewModel))
+        }
+    }
 
     fun getUserByInput(input: String){
         viewModelScope.launch {

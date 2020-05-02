@@ -24,6 +24,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        twitchViewModel.userClips("")
+
         binding.nameInput.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                 twitchViewModel.getUserByInput(binding.nameInput.text.toString() ?: "")
