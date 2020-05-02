@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentHomeBinding
 import com.eagskunst.apps.videoworld.utils.*
@@ -42,6 +43,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         twitchViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
             if (data != null && data.dataList.isNotEmpty()){
+
+                binding.streamerCard.setOnClickListener {
+                    findNavController().navigate(R.id.action_homeFragment_to_clipsFragment)
+                }
+
                 val streamer = data.dataList[0]
                 Picasso.get()
                     .load(streamer.profileImageUrl)
@@ -49,6 +55,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 binding.streamerLoginTv.text = streamer.displayName
                 binding.streamerDescpTv.text = streamer.description
                 binding.streamerViewCountTv.text = "Views: ${streamer.viewCount}"
+            }
+            else {
+                binding.streamerCard.setOnClickListener {  }
             }
         })
 

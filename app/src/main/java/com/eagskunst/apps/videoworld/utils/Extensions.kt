@@ -8,7 +8,9 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.DrawableRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
@@ -17,6 +19,8 @@ import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.SimpleExoPlayer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -71,4 +75,19 @@ fun Activity.showSnackbar(msg: String) {
 
 fun Fragment.showSnackbar(msg: String) {
     view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show() }
+}
+
+fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
+    val divider = DividerItemDecoration(
+        context,
+        DividerItemDecoration.VERTICAL
+    )
+    val drawable = ContextCompat.getDrawable(
+        context,
+        dividerDrawable
+    )
+    drawable?.let {
+        divider.setDrawable(drawable)
+        addItemDecoration(divider)
+    }
 }

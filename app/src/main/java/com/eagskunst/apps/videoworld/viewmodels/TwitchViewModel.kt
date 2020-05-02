@@ -10,6 +10,7 @@ import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -21,12 +22,15 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
     val userData = _userData as LiveData<UserDataResponse>
     val userClips = { userId: String ->
         liveData {
+            Timber.d("Enter user clips live data")
             if (userId.isEmpty())
                 emit(null)
             else
                 emit(repository.getUserClips(userId, this@TwitchViewModel))
         }
     }
+
+    fun currentUserId() = userData.value?.dataList?.get(0)?.id ?: ""
 
     fun getUserByInput(input: String){
         viewModelScope.launch {
