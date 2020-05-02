@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import kotlin.math.log
 
 /**
  * Created by eagskunst in 1/5/2020.
@@ -90,4 +91,16 @@ fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
         divider.setDrawable(drawable)
         addItemDecoration(divider)
     }
+}
+
+fun Int.formatInt(): String {
+    val digits = log(this.toFloat(), 10.toFloat()).toInt() + 1
+    if(digits < 4)
+        return this.toString()
+    val digitsStr = this.toString()
+    if (digits in 4..6){
+        return "${digitsStr[0]}K"
+    }
+
+    return "${digitsStr[0]}M"
 }

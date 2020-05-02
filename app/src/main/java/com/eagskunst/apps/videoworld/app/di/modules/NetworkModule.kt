@@ -1,7 +1,11 @@
 package com.eagskunst.apps.videoworld.app.di.modules
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
 import android.os.Build
+import android.telecom.ConnectionService
 import com.eagskunst.apps.videoworld.BuildConfig
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
 import com.eagskunst.apps.videoworld.app.di.qualifiers.TwitchQualifier
@@ -38,7 +42,9 @@ class NetworkModule {
 
     @Provides
     @AppScope
-    fun provideOkHttpClientBuilder(loggingInterceptor: HttpLoggingInterceptor, cache: Cache): OkHttpClient.Builder =
+    fun provideOkHttpClientBuilder(loggingInterceptor: HttpLoggingInterceptor,
+                                   cache: Cache,
+                                   context: Context): OkHttpClient.Builder =
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor { chain ->
@@ -48,12 +54,49 @@ class NetworkModule {
                         "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
                     )
                     .addHeader("Content-Type", "application/json")
+                if(hasNetwork(context)) {
+                    /*
+                        *  If there is Internet, get the cache that was stored 5 seconds ago.
+                        *  If the cache is older than 5 seconds, then discard it,
+                        *  and indicate an error in fetching the response.
+                        *  The 'max-age' attribute is responsible for this behavior.
+                        */
+                    requestBuilder.addHeader("Cache-Control", "public, max-age=" + 5)
+                }
+                else {
+                    /*
+                        *  If there is no Internet, get the cache that was stored 7 days ago.
+                        *  If the cache is older than 7 days, then discard it,
+                        *  and indicate an error in fetching the response.
+                        *  The 'max-stale' attribute is responsible for this behavior.
+                        *  The 'only-if-cached' attribute indicates to not retrieve new data; fetch the cache only instead.
+                        */
+                    requestBuilder.addHeader("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7).build()
+                }
                 val request = requestBuilder.build()
                 chain.proceed(request)
             }
             .readTimeout(90, TimeUnit.SECONDS)
             .connectTimeout(90, TimeUnit.SECONDS)
             .cache(cache)
+
+
+    fun hasNetwork(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw      = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        } else {
+            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+            return nwInfo.isConnected
+        }
+    }
+
 
     @Provides
     @AppScope

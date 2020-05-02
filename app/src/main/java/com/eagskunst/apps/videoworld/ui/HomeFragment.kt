@@ -54,7 +54,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                     .into(binding.profileIv)
                 binding.streamerLoginTv.text = streamer.displayName
                 binding.streamerDescpTv.text = streamer.description
-                binding.streamerViewCountTv.text = "Views: ${streamer.viewCount}"
+                binding.streamerViewCountTv.text = "Views: ${streamer.viewCount.formatInt()}"
             }
             else {
                 binding.streamerCard.setOnClickListener {  }
