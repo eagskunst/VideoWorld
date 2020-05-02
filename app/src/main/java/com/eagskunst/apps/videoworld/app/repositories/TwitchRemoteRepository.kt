@@ -1,9 +1,8 @@
 package com.eagskunst.apps.videoworld.app.repositories
 
 import com.eagskunst.apps.videoworld.app.network.api.ClipsApi
-import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
 import com.eagskunst.apps.videoworld.app.network.api.UserApi
-import com.eagskunst.apps.videoworld.utils.BaseRemoteRepository
+import com.eagskunst.apps.videoworld.utils.base.BaseRemoteRepository
 import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
 import dagger.Reusable
 import javax.inject.Inject

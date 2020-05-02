@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.utils
+package com.eagskunst.apps.videoworld.utils.base
 
 import android.view.View
 import androidx.lifecycle.LiveData

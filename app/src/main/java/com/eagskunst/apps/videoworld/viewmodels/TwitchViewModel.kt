@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
-import com.eagskunst.apps.videoworld.utils.BaseViewModel
+import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

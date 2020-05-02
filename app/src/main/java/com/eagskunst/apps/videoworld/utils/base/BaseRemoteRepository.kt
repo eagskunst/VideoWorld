@@ -1,5 +1,7 @@
-package com.eagskunst.apps.videoworld.utils
+package com.eagskunst.apps.videoworld.utils.base
 
+import com.eagskunst.apps.videoworld.utils.ErrorType
+import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
@@ -85,8 +87,12 @@ abstract class BaseRemoteRepository {
         return try {
             val jsonObject = JSONObject(responseBody!!.string())
             when {
-                jsonObject.has(MESSAGE_KEY) -> jsonObject.getString(MESSAGE_KEY)
-                jsonObject.has(ERROR_KEY) -> jsonObject.getString(ERROR_KEY)
+                jsonObject.has(MESSAGE_KEY) -> jsonObject.getString(
+                    MESSAGE_KEY
+                )
+                jsonObject.has(ERROR_KEY) -> jsonObject.getString(
+                    ERROR_KEY
+                )
                 else -> "Something wrong happened"
             }
         } catch (e: Exception) {

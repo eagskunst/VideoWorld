@@ -34,6 +34,7 @@ fun SimpleExoPlayer.updatePosition(newPosition: Int){
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
 val Activity.injector get() = (application as ComponentProvider).appComponent
+val Fragment.injector get() = requireActivity().injector
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     crossinline provider: () -> T) = viewModels<T> {
@@ -49,18 +50,25 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
     }
 }
 
-fun AppCompatActivity.hideKeyboard() {
+fun Activity.hideKeyboard() {
     val view = this.currentFocus
     if (view != null) {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
-
 }
 
-fun AppCompatActivity.showSnackbar(msg: String) {
+fun Fragment.hideKeyboard(){
+    requireActivity().hideKeyboard()
+}
+
+fun Activity.showSnackbar(msg: String) {
     this.currentFocus?.let {
         Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show()
     }
+}
+
+fun Fragment.showSnackbar(msg: String) {
+    view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show() }
 }
