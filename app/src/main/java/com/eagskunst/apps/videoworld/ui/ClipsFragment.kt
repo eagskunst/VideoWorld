@@ -3,6 +3,7 @@ package com.eagskunst.apps.videoworld.ui
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.clipInfo
@@ -26,6 +27,8 @@ class ClipsFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.clipsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 
         twitchViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
             if(data != null && data.dataList.isNotEmpty()){
