@@ -76,9 +76,8 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         binding.clipsRv.setDivider(R.drawable.divider)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDetach() {
+        super.onDetach()
         playerViewModel.changePlayerState(null)
     }
-
 }

@@ -19,6 +19,6 @@ interface CommentsDao {
     @Delete
     suspend fun deleteCommnet(comment: Comment)
 
-    @Query("SELECT * FROM Comment WHERE videoId = :videoId")
-    fun getCommentsOfVideoLiveData(videoId: String): LiveData<List<Comment>>
+    @Query("SELECT * FROM Comment")
+    fun getCommentsOfVideoLiveData(): LiveData<List<Comment>>
 }

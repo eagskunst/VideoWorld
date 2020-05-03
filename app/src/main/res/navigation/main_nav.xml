@@ -35,5 +35,13 @@
         android:id="@+id/clipFragment"
         android:name="com.eagskunst.apps.videoworld.ui.ClipFragment"
         android:label="fragment_clip"
-        tools:layout="@layout/fragment_clip" />
+        tools:layout="@layout/fragment_clip" >
+        <action
+            android:id="@+id/action_clipFragment_to_addCommentBottomSheetFragment"
+            app:destination="@id/addCommentBottomSheetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCommentBottomSheetFragment"
+        android:name="com.eagskunst.apps.videoworld.ui.AddCommentBottomSheetFragment"
+        android:label="AddCommentBottomSheetFragment" />
 </navigation>

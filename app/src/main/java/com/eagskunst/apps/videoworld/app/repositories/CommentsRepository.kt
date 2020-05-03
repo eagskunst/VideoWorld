@@ -12,6 +12,6 @@ class CommentsRepository @Inject constructor(private val localRepository: Commen
 
     suspend fun deleteComment(comment: Comment) = localRepository.deleteComment(comment)
 
-    fun commentsLiveData(videoId: String) = localRepository.commentLiveData(videoId)
+    fun commentsLiveData() = localRepository.commentLiveData()
 
 }

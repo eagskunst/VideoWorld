@@ -12,6 +12,8 @@ import javax.inject.Inject
  */
 class CommentsViewModel @Inject constructor(private val commentsRepository: CommentsRepository): BaseViewModel() {
 
+    val commentsLiveData = commentsRepository.commentsLiveData()
+
     fun insertNewComment(content: String, videoId: String) {
         viewModelScope.launch {
             commentsRepository.insertComment(Comment(
@@ -27,5 +29,4 @@ class CommentsViewModel @Inject constructor(private val commentsRepository: Comm
         }
     }
 
-    fun commentsLiveData(videoId: String) = commentsRepository.commentsLiveData(videoId)
 }
