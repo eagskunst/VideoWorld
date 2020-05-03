@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.eagskunst.apps.videoworld.R
+import com.eagskunst.apps.videoworld.comment
 import com.eagskunst.apps.videoworld.databinding.FragmentCommentsBinding
 import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.progressBar
@@ -54,6 +56,17 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
     }
 
     private fun buildCommentsList(comments: List<Comment>) {
-
+        binding.commentsRv.withModels {
+            comments.forEach { comment ->
+                comment {
+                    id(comment.id)
+                    commentData(comment)
+                    onDeleteClick { _, _, _, _ ->
+                        commentsViewModel.deleteComment(comment)
+                    }
+                }
+            }
+        }
     }
+
 }
