@@ -18,12 +18,19 @@
         <variable
             name="downloadClick"
             type="OnClickListener" />
+
+        <variable
+            name="isPlaying"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:onClick="@{viewClick}"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         >
 
         <ImageView

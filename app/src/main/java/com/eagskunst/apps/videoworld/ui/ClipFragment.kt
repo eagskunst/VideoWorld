@@ -11,9 +11,12 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentClipBinding
@@ -25,8 +28,10 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.tabs.TabLayoutMediator
 
 const val CLIP_URL = "URL"
+const val CLIP_ID = "CLIP_ID"
 class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
 
     override val bindingFunction: (view: View) -> FragmentClipBinding
@@ -51,6 +56,17 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         val videoSource = createVideoSource(currentUrl)
         player.prepare(videoSource)
         player.playWhenReady = true
+        val adapter = InnerFragmentsAdapter(childFragmentManager, listOf(
+            SubClipsFragment(),
+            CommentsFragment()
+        ))
+        binding.clipFragmentsPager.adapter = adapter
+        TabLayoutMediator(binding.clipTabLayout, binding.clipFragmentsPager) { tab, position ->
+            tab.text = if(position == 0)
+                "Clips"
+            else
+                "Comments"
+        }.attach()
         bindPlayerViews(binding.playerView)
     }
 
@@ -150,6 +166,16 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
             player.changeSpeed(item.title.toString().toFloat())
             (view as MaterialButton?)?.text = item.title
             true
+        }
+    }
+
+    inner class InnerFragmentsAdapter(manager: FragmentManager, private val fragments: List<Fragment>): FragmentStateAdapter(manager, lifecycle){
+        override fun createFragment(position: Int): Fragment {
+            return fragments[position]
+        }
+
+        override fun getItemCount(): Int {
+            return fragments.size
         }
     }
 }
