@@ -16,7 +16,7 @@ abstract class BaseFragment<B: ViewBinding>(@LayoutRes layout: Int): Fragment(la
     abstract val bindingFunction:(view: View) -> B
     private var _binding: B? = null
     protected val binding: B
-        get() = _binding ?: throw IllegalAccessException("Should only be accessed after onCreate and before onDestroy")
+        get() = _binding ?: throw IllegalAccessException("Should only be accessed after onCreateView and before onDestroyView")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
