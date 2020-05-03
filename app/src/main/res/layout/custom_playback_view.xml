@@ -9,6 +9,20 @@
     >
 
 
+    <ImageView
+        android:id="@+id/backBtn"
+        android:layout_width="@dimen/common_btn_height"
+        android:layout_height="@dimen/common_btn_height"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.023"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.043" />
+
     <ImageButton
         android:id="@id/exo_play"
         style="@style/ExoMediaButton.Play"
@@ -41,8 +55,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRewind"
         style="@style/IconBtn"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/common_btn_width"
+        android:layout_height="@dimen/common_btn_height"
         app:icon="@drawable/ic_rewind"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/invisibleView"
@@ -54,8 +68,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnForward"
         style="@style/IconBtn"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/common_btn_width"
+        android:layout_height="@dimen/common_btn_height"
         app:icon="@drawable/ic_forward"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,8 +81,8 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fullScreenBtn"
         style="@style/IconBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="@dimen/common_btn_height"
+        android:layout_height="@dimen/common_btn_height"
         app:icon="@drawable/exo_controls_fullscreen_enter"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +96,7 @@
         android:id="@+id/playbackSpeedBtn"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/common_btn_height"
         android:text="1.0x"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toStartOf="@+id/fullScreenBtn"
