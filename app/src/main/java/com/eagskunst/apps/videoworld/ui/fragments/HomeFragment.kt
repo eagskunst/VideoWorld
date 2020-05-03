@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -29,7 +29,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.nameInput.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_SEARCH) {
-                twitchViewModel.getUserByInput(binding.nameInput.text.toString() ?: "")
+                twitchViewModel.getUserByInput(binding.nameInput.text.toString())
                 hideKeyboard()
                 return@setOnEditorActionListener true
             }

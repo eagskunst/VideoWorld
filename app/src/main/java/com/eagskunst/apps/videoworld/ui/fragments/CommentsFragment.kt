@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -10,6 +10,7 @@ import com.eagskunst.apps.videoworld.comment
 import com.eagskunst.apps.videoworld.databinding.FragmentCommentsBinding
 import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.emptiness
+import com.eagskunst.apps.videoworld.ui.dialogs.AddCommentBottomSheetFragment
 import com.eagskunst.apps.videoworld.utils.activityViewModel
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.utils.injector
@@ -37,13 +38,14 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
             }
             //Removing observers that could trigger multiple calls
             commentsViewModel.commentsLiveData.removeObservers(viewLifecycleOwner)
-            
+
             currentClipId = state.clipsList[state.currentPosition].id
             observeCommentsForClip(currentClipId)
         })
 
         binding.commentContainer.setOnClickListener {
-            val bottomSheet = AddCommentBottomSheetFragment().apply {
+            val bottomSheet = AddCommentBottomSheetFragment()
+                .apply {
                 arguments = bundleOf(
                     CLIP_ID to currentClipId
                 )

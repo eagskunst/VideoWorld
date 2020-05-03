@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.os.Bundle
 import android.view.View
@@ -8,9 +8,10 @@ import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
-import com.eagskunst.apps.videoworld.clipInfo
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
 import com.eagskunst.apps.videoworld.progressBar
+import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
+import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.activityViewModel
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.utils.injector
@@ -55,10 +56,10 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
                 progressBar { id("progress") }
             else {
                 res.clipResponseList.forEach { clip ->
-                    clipInfo {
+                    clipInfoView {
                         id(clip.id)
                         clip(clip)
-                        backgroundColor(R.color.colorDefaultBg)
+                        downloadState(DownloadState.NOT_DOWNLOADED)
                         viewClick { _, _, _, position ->
 
                             playerViewModel.changePlayerState(

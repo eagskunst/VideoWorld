@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -24,14 +24,12 @@ import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
-import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
-import timber.log.Timber
 
 const val CLIP_URL = "URL"
 const val CLIP_ID = "CLIP_ID"

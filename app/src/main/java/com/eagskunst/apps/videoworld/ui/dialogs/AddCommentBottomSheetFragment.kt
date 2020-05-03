@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.dialogs
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.eagskunst.apps.videoworld.databinding.FragmentAddCommentBinding
+import com.eagskunst.apps.videoworld.ui.fragments.CLIP_ID
 import com.eagskunst.apps.videoworld.utils.activityViewModel
 import com.eagskunst.apps.videoworld.utils.injector
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.eagskunst.apps.videoworld.ui.HomeFragment"
+        android:name="com.eagskunst.apps.videoworld.ui.fragments.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -20,7 +20,7 @@
     </fragment>
     <fragment
         android:id="@+id/clipsFragment"
-        android:name="com.eagskunst.apps.videoworld.ui.ClipsListFragment"
+        android:name="com.eagskunst.apps.videoworld.ui.fragments.ClipsListFragment"
         android:label="fragment_clips"
         tools:layout="@layout/fragment_clips" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/clipFragment"
-        android:name="com.eagskunst.apps.videoworld.ui.ClipFragment"
+        android:name="com.eagskunst.apps.videoworld.ui.fragments.ClipFragment"
         android:label="fragment_clip"
         tools:layout="@layout/fragment_clip" >
         <action
@@ -42,6 +42,6 @@
     </fragment>
     <fragment
         android:id="@+id/addCommentBottomSheetFragment"
-        android:name="com.eagskunst.apps.videoworld.ui.AddCommentBottomSheetFragment"
+        android:name="com.eagskunst.apps.videoworld.ui.dialogs.AddCommentBottomSheetFragment"
         android:label="AddCommentBottomSheetFragment" />
 </navigation>

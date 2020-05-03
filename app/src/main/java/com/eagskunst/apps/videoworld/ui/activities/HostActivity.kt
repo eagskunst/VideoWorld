@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui
+package com.eagskunst.apps.videoworld.ui.activities
 
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
