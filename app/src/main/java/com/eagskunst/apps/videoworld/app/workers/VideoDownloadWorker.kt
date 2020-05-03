@@ -50,7 +50,7 @@ class VideoDownloadWorker @AssistedInject constructor(
     }
 
     private fun createForegroundInfo(progress: String = "Downloading file",
-                                     currentProgress: Int): ForegroundInfo {
+                                     currentProgress: Int, onGoing: Boolean = true): ForegroundInfo {
         val id = "DownloadClip-VideoWorld"
         val title = "Downloading clip"
         val cancel = "Cancel"
@@ -69,7 +69,7 @@ class VideoDownloadWorker @AssistedInject constructor(
             .setProgress(PROGRESS_MAX, currentProgress, false)
             .setContentText(progress)
             .setSmallIcon(R.drawable.ic_rewind)
-            .setOngoing(true)
+            .setOngoing(onGoing)
             .addAction(android.R.drawable.ic_delete, cancel, intent)
             .setChannelId(CHANNEL_ID)
 
@@ -107,7 +107,7 @@ class VideoDownloadWorker @AssistedInject constructor(
 
                 Timber.d("Video downloaded and saved.")
                 responseBody?.close()
-
+                setForeground(createForegroundInfo(currentProgress = 100, onGoing = false))
                 Result.success()
             } catch (e: Exception) {
                 e.printStackTrace()

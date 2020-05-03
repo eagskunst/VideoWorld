@@ -46,4 +46,6 @@ data class ClipResponse(
     fun getClipUrl(): String = Regex(".*(?=-preview)").run {
         "${find(thumbnailUrl)?.value}.mp4"
     }
+
+    fun getClipFilename() = "$id.mp4"
 }

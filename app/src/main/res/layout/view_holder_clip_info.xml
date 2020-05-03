@@ -98,6 +98,7 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/downloadBtn"
             style="@style/IconBtn"
+            android:onClick="@{downloadClick}"
             android:layout_width="@dimen/common_btn_height"
             android:layout_height="@dimen/common_btn_height"
             tools:icon="@drawable/ic_file_download"
