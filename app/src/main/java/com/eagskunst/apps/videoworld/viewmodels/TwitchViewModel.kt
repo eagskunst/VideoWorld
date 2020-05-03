@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
+import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
@@ -47,6 +48,10 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
         viewModelScope.launch {
             _userClips.value = repository.getUserClips(userId, this@TwitchViewModel)
         }
+    }
+
+    fun getClipUrl(clip: ClipResponse): String? = Regex(".*(?=-preview)").run {
+        "${find(clip.thumbnailUrl)?.value}.mp4"
     }
 
 }

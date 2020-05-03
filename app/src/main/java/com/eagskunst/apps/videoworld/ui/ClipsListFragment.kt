@@ -2,6 +2,7 @@ package com.eagskunst.apps.videoworld.ui
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
@@ -16,7 +17,7 @@ import com.eagskunst.apps.videoworld.utils.setDivider
 import com.eagskunst.apps.videoworld.utils.showSnackbar
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 
-class ClipsFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
+class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
 
     override val bindingFunction: (view: View) -> FragmentClipsBinding
         get() = FragmentClipsBinding::bind
@@ -54,8 +55,11 @@ class ClipsFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips
                     clipInfo {
                         id(clip.id)
                         clip(clip)
-                        viewClick { _, _, _, position ->
-                            showSnackbar("Clicked clip at $position position")
+                        viewClick { _, _, _, _ ->
+                            findNavController().navigate(
+                                R.id.action_clipsFragment_to_clipFragment,
+                                bundleOf(CLIP_URL to twitchViewModel.getClipUrl(clip))
+                                )
                         }
                     }
                 }
