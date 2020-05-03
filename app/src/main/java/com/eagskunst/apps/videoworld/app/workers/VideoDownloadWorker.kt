@@ -37,22 +37,32 @@ class VideoDownloadWorker @AssistedInject constructor(
         const val WORK_NAME = "DownloadWork"
         const val VIDEO_URL = "URL"
         const val DESIRED_FILENAME = "filename"
+        const val CLIP_TITLE = "clip_title"
         private const val PROGRESS_MAX = 100
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "VWCH1"
     }
 
     override suspend fun doWork(): Result {
+        Timber.d("Clip title in inputData: ${inputData.getString(CLIP_TITLE)}")
         val url = inputData.getString(VIDEO_URL) ?: return Result.failure()
         val filename = inputData.getString(DESIRED_FILENAME) ?: return  Result.failure()
-        setForeground(createForegroundInfo(currentProgress = 0))
-        return download(url, filename)
+        val clipTitle = inputData.getString(CLIP_TITLE) ?: "Downloading clip"
+        val foregroundInfo = createForegroundInfo(
+            currentProgress = 0,
+            clipTitle = clipTitle,
+            indeterminateProgress = true)
+        setForeground(foregroundInfo)
+        return download(url, filename, clipTitle)
     }
 
     private fun createForegroundInfo(progress: String = "Downloading file",
-                                     currentProgress: Int, onGoing: Boolean = true): ForegroundInfo {
+                                     currentProgress: Int,
+                                     onGoing: Boolean = true,
+                                     indeterminateProgress: Boolean = false,
+                                     clipTitle: String): ForegroundInfo {
+
         val id = "DownloadClip-VideoWorld"
-        val title = "Downloading clip"
         val cancel = "Cancel"
         // This PendingIntent can be used to cancel the worker
         val intent = WorkManager.getInstance(applicationContext)
@@ -64,9 +74,9 @@ class VideoDownloadWorker @AssistedInject constructor(
         }
 
         val notificationBuilder = NotificationCompat.Builder(applicationContext, id)
-            .setContentTitle(title)
-            .setTicker(title)
-            .setProgress(PROGRESS_MAX, currentProgress, false)
+            .setContentTitle(clipTitle)
+            .setTicker(clipTitle)
+            .setProgress(PROGRESS_MAX, currentProgress, indeterminateProgress)
             .setContentText(progress)
             .setSmallIcon(R.drawable.ic_rewind)
             .setOngoing(onGoing)
@@ -76,7 +86,7 @@ class VideoDownloadWorker @AssistedInject constructor(
         return ForegroundInfo(NOTIFICATION_ID, notificationBuilder.build())
     }
 
-    private suspend fun download(url: String, outputFile: String): Result {
+    private suspend fun download(url: String, outputFile: String, clipTitle: String): Result {
         return withContext(Dispatchers.IO){
             try {
                 Timber.d("Starting download of $outputFile from $url")
@@ -99,7 +109,7 @@ class VideoDownloadWorker @AssistedInject constructor(
                         //Update notification
                         val currentProgress = currentProgress(length.toDouble(), bytesRed.toDouble())
                         setForeground(
-                            createForegroundInfo(currentProgress = currentProgress)
+                            createForegroundInfo(currentProgress = currentProgress, clipTitle = clipTitle)
                         )
                     }
                     output.flush()
@@ -107,7 +117,7 @@ class VideoDownloadWorker @AssistedInject constructor(
 
                 Timber.d("Video downloaded and saved.")
                 responseBody?.close()
-                setForeground(createForegroundInfo(currentProgress = 100, onGoing = false))
+                setForeground(createForegroundInfo(currentProgress = 100, onGoing = false, clipTitle = clipTitle))
                 Result.success()
             } catch (e: Exception) {
                 e.printStackTrace()

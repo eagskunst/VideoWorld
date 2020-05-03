@@ -32,7 +32,9 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
     private val twitchViewModel: TwitchViewModel by activityViewModel {
         injector.twitchViewModel
     }
-    private val downloadViewModel: DownloadViewModel by activityViewModels()
+    private val downloadViewModel: DownloadViewModel by activityViewModel() {
+        injector.downloadViewModel
+    }
     private val playerViewModel: PlayerViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,9 +51,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
 
         twitchViewModel.userClips.observe(viewLifecycleOwner, Observer { res ->
             if (res != null) {
-                downloadViewModel.updateDownloadedVideosList(
-                    res.clipResponseList,
-                    requireContext().filesDir.path)
+                downloadViewModel.updateDownloadedVideosList(res.clipResponseList)
             }
             buildRecyclerView(binding, res)
         })
@@ -94,9 +94,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         when (downloadState) {
             DownloadState.NOT_DOWNLOADED -> startDownloadWork(clip)
             DownloadState.DOWNLOADING -> cancelDownloadWork(clip)
-            DownloadState.DOWNLOADED -> downloadViewModel.deleteClipInFiles(
-                requireContext().filesDir.path,
-                clip)
+            DownloadState.DOWNLOADED -> downloadViewModel.deleteClipInFiles(clip)
         }
         binding.clipsRv.requestModelBuild()
     }
@@ -108,6 +106,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         val data = Data.Builder()
             .putString(VideoDownloadWorker.VIDEO_URL, url)
             .putString(VideoDownloadWorker.DESIRED_FILENAME, clip.getClipFilename())
+            .putString(VideoDownloadWorker.CLIP_TITLE, clip.title)
             .build()
         val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()
             .setInputData(data)
@@ -124,8 +123,10 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
             .observe(requireActivity(), Observer { worksInfo ->
                 if (worksInfo == null)
                     return@Observer
+
                 val work = worksInfo[0]
                 if (work.state == WorkInfo.State.SUCCEEDED){
+                    downloadViewModel.removeVideoFromDownloadList(clip)
                     downloadViewModel.updateDownloadedVideosList(clip)
                     twitchViewModel.getUserClips(twitchViewModel.currentUserId())
                 }

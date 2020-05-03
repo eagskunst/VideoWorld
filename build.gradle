@@ -12,7 +12,7 @@ ext {
     lifecycleVersion = '2.2.0'
     pagingVersion = '2.1.2'
     roomVersion = '2.2.5'
-    workVersion = '2.3.4'
+    workVersion = '2.4.0-alpha03'
     materialDialogsVersion = '3.3.0'
     epoxyVersion = '3.9.0'
     glideVersion = '4.10.0'

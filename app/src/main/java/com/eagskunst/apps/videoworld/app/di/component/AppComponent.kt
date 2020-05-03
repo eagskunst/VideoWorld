@@ -8,6 +8,7 @@ import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.utils.UserPreferences
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
+import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.google.android.exoplayer2.upstream.DataSource
 import dagger.BindsInstance
@@ -31,4 +32,5 @@ interface AppComponent {
     val twitchViewModel: TwitchViewModel
     val commentsViewModel: CommentsViewModel
     val userPreferences: UserPreferences
+    val downloadViewModel: DownloadViewModel
 }

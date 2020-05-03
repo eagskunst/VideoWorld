@@ -6,25 +6,32 @@ import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by eagskunst in 3/5/2020.
+ * Context is only used for getting the filesDir is path. Do not worry about
+ * leaks of the variable as is only used in the constructor scope
  */
-class DownloadViewModel: BaseViewModel() {
+class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
 
+
+    private val filesDirPath: String = context.filesDir.path
     private var downloadedVideosList = listOf<ClipResponse>()
     private val downloadingVideosList = mutableListOf<ClipResponse>()
     val downloadWorksIds = mutableListOf<UUID>()
 
-    fun updateDownloadedVideosList(clips: List<ClipResponse>, filesDirPath: String) {
+    fun updateDownloadedVideosList(clips: List<ClipResponse>) {
         downloadedVideosList = clips.filter {
-            File("${filesDirPath}/${it.getClipFilename()}").exists()
+            getClipFile(it).exists()
         }
     }
 
     fun updateDownloadedVideosList(clip: ClipResponse) {
-        downloadedVideosList = downloadingVideosList.toMutableList().apply {
-            add(clip)
+        if (getClipFile(clip).exists()){
+            downloadedVideosList = downloadedVideosList.toMutableList().apply {
+                add(clip)
+            }
         }
     }
 
@@ -37,10 +44,13 @@ class DownloadViewModel: BaseViewModel() {
     }
 
     fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
-    fun removeVideoFromDownloadList(clip: ClipResponse) = downloadingVideosList.remove(clip)
+    fun removeVideoFromDownloadList(clip: ClipResponse) {
+        if (getClipFile(clip).exists())
+            downloadingVideosList.remove(clip)
+    }
 
-    fun deleteClipInFiles(filesDirPath: String, clip: ClipResponse) {
-        File("${filesDirPath}/${clip.getClipFilename()}").delete()
+    fun deleteClipInFiles(clip: ClipResponse) {
+        getClipFile(clip).delete()
         downloadedVideosList = downloadedVideosList.toMutableList().apply {
             remove(clip)
         }
@@ -50,5 +60,7 @@ class DownloadViewModel: BaseViewModel() {
     fun getDownloadUrlOfClip(clip: ClipResponse): String? {
         return Regex("[^/]+\$").find(clip.getClipUrl())?.value
     }
+
+    fun getClipFile(clip: ClipResponse) = File("${filesDirPath}/${clip.getClipFilename()}")
 
 }
