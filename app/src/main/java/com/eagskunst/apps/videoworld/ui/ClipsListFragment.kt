@@ -3,9 +3,12 @@ package com.eagskunst.apps.videoworld.ui
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
+import com.eagskunst.apps.videoworld.app.adapters.ClipsAdapter
+import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.clipInfo
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
@@ -15,6 +18,7 @@ import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.utils.injector
 import com.eagskunst.apps.videoworld.utils.setDivider
 import com.eagskunst.apps.videoworld.utils.showSnackbar
+import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 
 class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
@@ -25,6 +29,8 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
     private val twitchViewModel: TwitchViewModel by activityViewModel {
         injector.viewModel
     }
+
+    private val playerViewModel: PlayerViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -55,17 +61,29 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
                     clipInfo {
                         id(clip.id)
                         clip(clip)
-                        viewClick { _, _, _, _ ->
-                            findNavController().navigate(
-                                R.id.action_clipsFragment_to_clipFragment,
-                                bundleOf(CLIP_URL to twitchViewModel.getClipUrl(clip))
+                        viewClick { _, _, _, position ->
+
+                            playerViewModel.changePlayerState(
+                                PlayerState(
+                                    ClipsAdapter.fromClipResponseListToClipInfoList(
+                                        res.clipResponseList[0].broadcasterId,
+                                        res.clipResponseList),
+                                    position
                                 )
+                            )
+
+                            findNavController().navigate(R.id.action_clipsFragment_to_clipFragment)
                         }
                     }
                 }
             }
         }
         binding.clipsRv.setDivider(R.drawable.divider)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        playerViewModel.changePlayerState(null)
     }
 
 }

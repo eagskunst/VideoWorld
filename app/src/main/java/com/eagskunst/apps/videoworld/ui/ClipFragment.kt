@@ -23,21 +23,25 @@ import com.eagskunst.apps.videoworld.databinding.FragmentClipBinding
 import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
+import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
+import timber.log.Timber
 
 const val CLIP_URL = "URL"
 const val CLIP_ID = "CLIP_ID"
-class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
+class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), Player.EventListener {
 
     override val bindingFunction: (view: View) -> FragmentClipBinding
         get() = FragmentClipBinding::bind
 
     private val twitchViewModel: TwitchViewModel by activityViewModel { injector.viewModel }
+    private val playerViewModel: PlayerViewModel by activityViewModels()
     private val orientationViewModel: OrientationViewModel by activityViewModels()
     private val dsFactory by lazy { injector.dataSourceFactory }
     private val player: SimpleExoPlayer by lazy {
@@ -52,10 +56,32 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.playerView.player = player
-        val currentUrl = arguments?.getString(CLIP_URL) ?: ""
-        val videoSource = createVideoSource(currentUrl)
-        player.prepare(videoSource)
-        player.playWhenReady = true
+
+        playerViewModel.playerStateLiveData.observe(viewLifecycleOwner, Observer { state ->
+            if (state == null) {
+                return@Observer
+            }
+
+            val videoSource = createVideoSource(
+                state.clipsList[state.currentPosition].url
+            )
+
+            player.prepare(videoSource)
+            player.playWhenReady = true
+
+            player.addListener(object : Player.EventListener {
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    Timber.d("New playback state: $playbackState. Current position: ${state.currentPosition}")
+                    if (playbackState == Player.STATE_ENDED) {
+                        if (state.currentPosition < state.maxPosition) {
+                            playerViewModel.changePlayerState(state.copy(currentPosition = state.currentPosition+1))
+                        }
+                        player.removeListener(this)
+                    }
+                }
+            })
+        })
+
         val adapter = InnerFragmentsAdapter(childFragmentManager, listOf(
             SubClipsFragment(),
             CommentsFragment()

@@ -49,9 +49,4 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
             _userClips.value = repository.getUserClips(userId, this@TwitchViewModel)
         }
     }
-
-    fun getClipUrl(clip: ClipResponse): String? = Regex(".*(?=-preview)").run {
-        "${find(clip.thumbnailUrl)?.value}.mp4"
-    }
-
 }

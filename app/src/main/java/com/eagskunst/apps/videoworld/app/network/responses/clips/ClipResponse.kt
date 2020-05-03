@@ -42,4 +42,8 @@ data class ClipResponse(
         val date = Constants.TWITCH_DATE_SDF.parse(createdAt)
         return Constants.GLOBAL_SDF.format(date ?: Date())
     }
+
+    fun getClipUrl(): String? = Regex(".*(?=-preview)").run {
+        "${find(thumbnailUrl)?.value}.mp4"
+    }
 }
