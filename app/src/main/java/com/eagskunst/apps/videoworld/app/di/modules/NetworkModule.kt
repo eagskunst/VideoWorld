@@ -81,7 +81,7 @@ class NetworkModule {
             .cache(cache)
 
 
-    fun hasNetwork(context: Context): Boolean {
+    private fun hasNetwork(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val nw      = connectivityManager.activeNetwork ?: return false

@@ -32,14 +32,17 @@ class ClipsFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips
 
         twitchViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
             if(data != null && data.dataList.isNotEmpty()){
-                val streamerName = data.dataList[0].login
+                val streamerName = data.dataList[0].displayName
                 binding.clipsToolbar.title = "$streamerName clips"
             }
         })
 
-        twitchViewModel.userClips(twitchViewModel.currentUserId()).observe(viewLifecycleOwner, Observer { res ->
+        twitchViewModel.userClips.observe(viewLifecycleOwner, Observer { res ->
             buildRecyclerView(binding, res)
         })
+
+        if(!twitchViewModel.clipsListExists())
+            twitchViewModel.getUserClips(twitchViewModel.currentUserId())
     }
 
     private fun buildRecyclerView(binding: FragmentClipsBinding, res: UserClipsResponse?) {

@@ -20,23 +20,32 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
 
     private val _userData = MutableLiveData<UserDataResponse>()
     val userData = _userData as LiveData<UserDataResponse>
-    val userClips = { userId: String ->
-        liveData {
-            Timber.d("Enter user clips live data")
-            if (userId.isEmpty())
-                emit(null)
-            else
-                emit(repository.getUserClips(userId, this@TwitchViewModel))
-        }
-    }
+    private val _userClips = MutableLiveData<UserClipsResponse?>()
+    val userClips = _userClips as LiveData<UserClipsResponse?>
 
     fun currentUserId() = userData.value?.dataList?.get(0)?.id ?: ""
+    fun clipsListExists() = userClips.value != null
 
     fun getUserByInput(input: String){
         viewModelScope.launch {
             _progressVisibility.value = View.VISIBLE
             _userData.value = repository.getUserByName(input, this@TwitchViewModel)
             _progressVisibility.value = View.GONE
+        }
+    }
+
+    /**
+     * @param userId The ID of the Streamer whose clips are gonna be fetch. If null, resets
+     * If empty, sets the [userClips] value to null.
+     */
+    fun getUserClips(userId: String){
+        if(userId.isEmpty()) {
+            _userClips.postValue(null)
+            return
+        }
+
+        viewModelScope.launch {
+            _userClips.value = repository.getUserClips(userId, this@TwitchViewModel)
         }
     }
 
