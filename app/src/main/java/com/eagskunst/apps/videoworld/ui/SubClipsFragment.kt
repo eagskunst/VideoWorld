@@ -36,6 +36,13 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        playerViewModel.playerStateLiveData.value?.let {
+            binding.clipsRv.scrollToPosition(it.currentPosition)
+        }
+    }
+
     private fun bindClips(playerState: PlayerState) {
         binding.clipsRv.withModels {
             playerState.clipsList.forEach { clip ->

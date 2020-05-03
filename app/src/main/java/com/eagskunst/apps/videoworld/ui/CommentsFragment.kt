@@ -35,6 +35,9 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
             if (state == null) {
                 return@Observer
             }
+            //Removing observers that could trigger multiple calls
+            commentsViewModel.commentsLiveData.removeObservers(viewLifecycleOwner)
+            
             currentClipId = state.clipsList[state.currentPosition].id
             observeCommentsForClip(currentClipId)
         })

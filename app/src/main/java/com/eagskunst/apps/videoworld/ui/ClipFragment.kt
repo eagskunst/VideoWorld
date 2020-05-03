@@ -40,7 +40,6 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
     override val bindingFunction: (view: View) -> FragmentClipBinding
         get() = FragmentClipBinding::bind
 
-    private val twitchViewModel: TwitchViewModel by activityViewModel { injector.twitchViewModel }
     private val playerViewModel: PlayerViewModel by activityViewModels()
     private val orientationViewModel: OrientationViewModel by activityViewModels()
     private val dsFactory by lazy { injector.dataSourceFactory }
@@ -53,6 +52,8 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
         1.0f,
         1.5f)
 
+    private var playerEventListener: Player.EventListener? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.playerView.player = player
@@ -62,24 +63,19 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
                 return@Observer
             }
 
+            //Removing player listener on new player state.
+            playerEventListener?.let {
+                player.removeListener(it)
+            }
+
             val videoSource = createVideoSource(
                 state.clipsList[state.currentPosition].getClipUrl()
             )
 
             player.prepare(videoSource)
             player.playWhenReady = true
-
-            player.addListener(object : Player.EventListener {
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    Timber.d("New playback state: $playbackState. Current position: ${state.currentPosition}")
-                    if (playbackState == Player.STATE_ENDED) {
-                        if (state.currentPosition < state.maxPosition - 1) {
-                            playerViewModel.changePlayerState(state.copy(currentPosition = state.currentPosition+1))
-                        }
-                        player.removeListener(this)
-                    }
-                }
-            })
+            playerEventListener = playerViewModel.createPlayerListener(state)
+            player.addListener(playerEventListener!!)
         })
 
         val adapter = InnerFragmentsAdapter(childFragmentManager, listOf(
@@ -106,6 +102,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
         player.stop()
         player.release()
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        playerEventListener = null
     }
 
     override fun onDestroyView() {
