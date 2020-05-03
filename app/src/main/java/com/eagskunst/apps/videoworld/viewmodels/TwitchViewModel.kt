@@ -44,6 +44,9 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
             _userClips.postValue(null)
             return
         }
+        if(userId == currentUserId()) {
+            _userClips.postValue(_userClips.value)
+        }
 
         viewModelScope.launch {
             _userClips.value = repository.getUserClips(userId, this@TwitchViewModel)

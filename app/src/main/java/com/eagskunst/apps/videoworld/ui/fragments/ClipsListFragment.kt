@@ -94,7 +94,9 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         when (downloadState) {
             DownloadState.NOT_DOWNLOADED -> startDownloadWork(clip)
             DownloadState.DOWNLOADING -> cancelDownloadWork(clip)
-            DownloadState.DOWNLOADED -> downloadViewModel.deleteClipInFiles(requireContext(), clip)
+            DownloadState.DOWNLOADED -> downloadViewModel.deleteClipInFiles(
+                requireContext().filesDir.path,
+                clip)
         }
         binding.clipsRv.requestModelBuild()
     }
@@ -125,9 +127,11 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
                 val work = worksInfo[0]
                 if (work.state == WorkInfo.State.SUCCEEDED){
                     downloadViewModel.updateDownloadedVideosList(clip)
+                    twitchViewModel.getUserClips(twitchViewModel.currentUserId())
                 }
                 else if(work.state == WorkInfo.State.CANCELLED) {
                     cancelDownloadWork(clip)
+                    twitchViewModel.getUserClips(twitchViewModel.currentUserId())
                 }
             })
 

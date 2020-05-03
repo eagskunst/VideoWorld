@@ -39,8 +39,8 @@ class DownloadViewModel: BaseViewModel() {
     fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
     fun removeVideoFromDownloadList(clip: ClipResponse) = downloadingVideosList.remove(clip)
 
-    fun deleteClipInFiles(context: Context, clip: ClipResponse) {
-        File("${context.filesDir}${clip.getClipFilename()}").delete()
+    fun deleteClipInFiles(filesDirPath: String, clip: ClipResponse) {
+        File("${filesDirPath}/${clip.getClipFilename()}").delete()
         downloadedVideosList = downloadedVideosList.toMutableList().apply {
             remove(clip)
         }
