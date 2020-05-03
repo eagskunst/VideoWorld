@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.google.android.exoplayer2.PlaybackParameters
@@ -57,6 +58,12 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
     }
 }
 
+inline fun <reified T : ViewModel> Fragment.viewModel(
+    crossinline provider: () -> T) = viewModels<T> {
+    object : ViewModelProvider.Factory {
+        override fun <T : ViewModel> create(modelClass: Class<T>) = provider() as T
+    }
+}
 fun Activity.hideKeyboard() {
     val view = this.currentFocus
     if (view != null) {
