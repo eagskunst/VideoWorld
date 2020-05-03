@@ -15,7 +15,6 @@ import com.eagskunst.apps.videoworld.utils.activityViewModel
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.utils.injector
 import com.eagskunst.apps.videoworld.utils.setDivider
-import com.eagskunst.apps.videoworld.utils.showSnackbar
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 
