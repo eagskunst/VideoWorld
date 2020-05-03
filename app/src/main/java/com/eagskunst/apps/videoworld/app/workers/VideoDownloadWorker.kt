@@ -36,21 +36,22 @@ class VideoDownloadWorker @AssistedInject constructor(
     companion object {
         const val WORK_NAME = "DownloadWork"
         const val VIDEO_URL = "URL"
+        const val DESIRED_FILENAME = "filename"
         private const val PROGRESS_MAX = 100
         private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "VWCH1"
-        private const val FILENAME = "download-video-videoworld.mp4"
     }
 
     override suspend fun doWork(): Result {
         val url = inputData.getString(VIDEO_URL) ?: return Result.failure()
+        val filename = inputData.getString(DESIRED_FILENAME) ?: return  Result.failure()
         setForeground(createForegroundInfo(currentProgress = 0))
-        return download(url, FILENAME)
+        return download(url, filename)
     }
 
     private fun createForegroundInfo(progress: String = "Downloading file",
                                      currentProgress: Int): ForegroundInfo {
-        val id = "DownloadClip-ID-08080"
+        val id = "DownloadClip-VideoWorld"
         val title = "Downloading clip"
         val cancel = "Cancel"
         // This PendingIntent can be used to cancel the worker
@@ -116,7 +117,6 @@ class VideoDownloadWorker @AssistedInject constructor(
     }
 
     private fun currentProgress(length: Double, bytesRed: Double): Int {
-        Timber.d("Updating notification. Length: $length, bytesRed: $bytesRed")
         val progressDouble = (bytesRed/length)*100.0
         return if(progressDouble.toInt() < 1) 1 else progressDouble.toInt()
     }

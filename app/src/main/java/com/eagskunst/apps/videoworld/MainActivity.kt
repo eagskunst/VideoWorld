@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                 Timber.d("Url: $url")
                 val data = Data.Builder()
                     .putString(VideoDownloadWorker.VIDEO_URL, url)
+                    .putString(VideoDownloadWorker.DESIRED_FILENAME, "twitch-clip.mp4")
                     .build()
 
                 val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()

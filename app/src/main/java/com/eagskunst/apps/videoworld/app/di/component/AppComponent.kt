@@ -6,6 +6,7 @@ import com.eagskunst.apps.videoworld.app.VideoWorldApp
 import com.eagskunst.apps.videoworld.app.di.modules.*
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
+import com.eagskunst.apps.videoworld.utils.UserPreferences
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.google.android.exoplayer2.upstream.DataSource
@@ -29,4 +30,5 @@ interface AppComponent {
     val dataSourceFactory: DataSource.Factory
     val twitchViewModel: TwitchViewModel
     val commentsViewModel: CommentsViewModel
+    val userPreferences: UserPreferences
 }
