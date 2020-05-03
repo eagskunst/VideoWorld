@@ -74,7 +74,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     Timber.d("New playback state: $playbackState. Current position: ${state.currentPosition}")
                     if (playbackState == Player.STATE_ENDED) {
-                        if (state.currentPosition < state.maxPosition) {
+                        if (state.currentPosition < state.maxPosition - 1) {
                             playerViewModel.changePlayerState(state.copy(currentPosition = state.currentPosition+1))
                         }
                         player.removeListener(this)

@@ -123,6 +123,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
+        //Video files dir url => "${filesDir.path}/download-video-videoworld.mp4"
         return ProgressiveMediaSource.Factory(dsFactory)
             .createMediaSource(Uri.parse(currentUrl))
     }
