@@ -19,7 +19,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
 
     private val twitchViewModel: TwitchViewModel by activityViewModel {
-        injector.viewModel
+        injector.twitchViewModel
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

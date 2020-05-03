@@ -25,7 +25,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         get() = FragmentClipsBinding::bind
 
     private val twitchViewModel: TwitchViewModel by activityViewModel {
-        injector.viewModel
+        injector.twitchViewModel
     }
 
     private val playerViewModel: PlayerViewModel by activityViewModels()

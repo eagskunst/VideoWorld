@@ -41,7 +41,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
     override val bindingFunction: (view: View) -> FragmentClipBinding
         get() = FragmentClipBinding::bind
 
-    private val twitchViewModel: TwitchViewModel by activityViewModel { injector.viewModel }
+    private val twitchViewModel: TwitchViewModel by activityViewModel { injector.twitchViewModel }
     private val playerViewModel: PlayerViewModel by activityViewModels()
     private val orientationViewModel: OrientationViewModel by activityViewModels()
     private val dsFactory by lazy { injector.dataSourceFactory }

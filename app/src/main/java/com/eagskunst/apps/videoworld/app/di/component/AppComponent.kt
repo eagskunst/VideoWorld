@@ -16,7 +16,7 @@ import dagger.Component
  */
 @AppScope
 @Component(modules = [ApiModule::class, WorkerAssistedModule::class, WorkersModule::class,
-    ExoPlayerModule::class])
+    ExoPlayerModule::class, DatabaseModule::class])
 interface AppComponent {
 
     @Component.Factory
@@ -26,5 +26,5 @@ interface AppComponent {
 
     val workerFactory: WorkerFactory
     val dataSourceFactory: DataSource.Factory
-    val viewModel: TwitchViewModel
+    val twitchViewModel: TwitchViewModel
 }
