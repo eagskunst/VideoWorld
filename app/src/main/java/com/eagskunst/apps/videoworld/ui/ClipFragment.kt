@@ -8,6 +8,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -63,7 +64,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
             }
 
             val videoSource = createVideoSource(
-                state.clipsList[state.currentPosition].url
+                state.clipsList[state.currentPosition].getClipUrl()
             )
 
             player.prepare(videoSource)
@@ -160,7 +161,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
      * @param orientation: The current [ActivityInfo] screen orientation
      */
     private fun updatePlayerView(fullScreenBtn: MaterialButton?, orientation: Int) {
-        val params = binding.playerView.layoutParams as ConstraintLayout.LayoutParams
+        val params = binding.playerView.layoutParams as LinearLayout.LayoutParams
         if(orientation == Configuration.ORIENTATION_LANDSCAPE){
             params.height = FrameLayout.LayoutParams.MATCH_PARENT
             fullScreenBtn?.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fullscreen_exit_black)

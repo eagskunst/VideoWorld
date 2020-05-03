@@ -43,7 +43,7 @@ data class ClipResponse(
         return Constants.GLOBAL_SDF.format(date ?: Date())
     }
 
-    fun getClipUrl(): String? = Regex(".*(?=-preview)").run {
+    fun getClipUrl(): String = Regex(".*(?=-preview)").run {
         "${find(thumbnailUrl)?.value}.mp4"
     }
 }

@@ -6,6 +6,7 @@
     <data>
         <import type="com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse"/>
         <import type="android.view.View.OnClickListener"/>
+        <import type="androidx.core.content.ContextCompat"/>
 
         <variable
             name="clip"
@@ -22,6 +23,10 @@
         <variable
             name="isPlaying"
             type="Boolean" />
+
+        <variable
+            name="backgroundColor"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +35,7 @@
         android:onClick="@{viewClick}"
         android:clickable="true"
         android:focusable="true"
+        app:backgroundColor="@{ContextCompat.getColor(context, backgroundColor)}"
         android:foreground="?android:attr/selectableItemBackground"
         >
 

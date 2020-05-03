@@ -2,12 +2,10 @@ package com.eagskunst.apps.videoworld.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
-import com.eagskunst.apps.videoworld.app.adapters.ClipsAdapter
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.clipInfo
@@ -61,14 +59,12 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
                     clipInfo {
                         id(clip.id)
                         clip(clip)
+                        backgroundColor(R.color.colorDefaultBg)
                         viewClick { _, _, _, position ->
 
                             playerViewModel.changePlayerState(
                                 PlayerState(
-                                    ClipsAdapter.fromClipResponseListToClipInfoList(
-                                        res.clipResponseList[0].broadcasterId,
-                                        res.clipResponseList),
-                                    position
+                                    res.clipResponseList, position
                                 )
                             )
 
