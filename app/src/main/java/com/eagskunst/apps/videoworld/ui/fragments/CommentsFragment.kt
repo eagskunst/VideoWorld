@@ -55,6 +55,10 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
         buildCommentsList(null)
     }
 
+    /**
+     * Adds the observer for the comments live data.
+     * @param videoId: The id of the video for filtering purposes.
+     */
     private fun observeCommentsForClip(videoId: String) {
         commentsViewModel.commentsLiveData.observe(viewLifecycleOwner, Observer { comments ->
             Timber.d("Building comment list from live data")

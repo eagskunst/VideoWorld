@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
+import com.eagskunst.apps.videoworld.ui.view_holders.ClipInfoView
 import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
@@ -35,6 +36,9 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
         })
     }
 
+    /**
+     * Automatically scroll to the video being displayed. Even if user navigated to another app
+     */
     override fun onResume() {
         super.onResume()
         playerViewModel.playerStateLiveData.value?.let {
@@ -42,6 +46,11 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
         }
     }
 
+    /**
+     * Binds every clip's [ClipInfoView] variables.
+     * The holds view's click listener updates the player state.
+     * @param playerState: The current state of the ExoPlayer view.
+     */
     private fun bindClips(playerState: PlayerState) {
         binding.clipsRv.withModels {
             playerState.clipsList.forEach { clip ->

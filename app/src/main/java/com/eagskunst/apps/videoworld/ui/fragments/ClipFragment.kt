@@ -32,7 +32,6 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
 
-const val CLIP_URL = "URL"
 const val CLIP_ID = "CLIP_ID"
 class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), Player.EventListener {
 
@@ -52,6 +51,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
         1.0f,
         1.5f)
 
+    //Global event listener to serve as a single source of truth for the auto-play events
     private var playerEventListener: Player.EventListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,6 +83,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
             SubClipsFragment(),
             CommentsFragment()
         ))
+
         binding.clipFragmentsPager.adapter = adapter
         TabLayoutMediator(binding.clipTabLayout, binding.clipFragmentsPager) { tab, position ->
             tab.text = if(position == 0)
@@ -98,6 +99,9 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
         player.playWhenReady = false
     }
 
+    /**
+     * Release the player, resets orientation and null out the player event listener
+     */
     override fun onDetach() {
         super.onDetach()
         player.stop()
@@ -132,6 +136,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
+        //Observes configuration changes for updating the UI
         orientationViewModel.configData.observe(viewLifecycleOwner, Observer { config ->
             if(config != null){
                 updatePlayerView(fullScreenBtn, config.orientation)
@@ -170,6 +175,10 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
         binding.playerView.layoutParams = params
     }
 
+    /**
+     * Add full screen flag to the window  if the cellphone is in landscape. Otherwise, removes the flag
+     * @param orientation: The current [ActivityInfo] screen orientation
+     */
     private fun updateWindowMode(orientation: Int){
         if(orientation == ActivityInfo.SCREEN_ORIENTATION_USER)
             requireActivity().window.setFlags(

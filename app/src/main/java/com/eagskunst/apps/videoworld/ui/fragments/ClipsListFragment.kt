@@ -87,9 +87,15 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
                 }
             }
         }
-        binding.clipsRv.setDivider(R.drawable.divider)
+        //binding.clipsRv.setDivider(R.drawable.divider)
     }
 
+    /**
+     * Trigger another function depending of the downloadState and calls for a fresh model build
+     * of the Epoxy recycler view.
+     * @param downloadState: The view's clip's [DownloadState]
+     * @param clip: The clip in the view that has been clicked.
+     */
     private fun handleDownloadAction(downloadState: Int, clip: ClipResponse) {
         Timber.d("Doing click!")
         when (downloadState) {
@@ -100,6 +106,14 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         binding.clipsRv.requestModelBuild()
     }
 
+    /**
+     * Starts a [VideoDownloadWorker].
+     * This updates the [DownloadViewModel]'s download list when the WorkerInfo of the [VideoDownloadWorker]
+     * changes.
+     * This calls the [TwitchViewModel.getUserClips] function with the current user id just to
+     * refresh the recycler view with the new icons for the download state buttons.
+     * @param clip: The clip that's going to be downloaded
+     */
     private fun startDownloadWork(clip: ClipResponse) {
         val url = downloadViewModel.getDownloadUrlOfClip(clip)
         Timber.d("Computed video URL suffix for download: $url")
@@ -144,6 +158,10 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
 
     }
 
+    /**
+     * Cancels the [VideoDownloadWorker] and removes the clip from the [DownloadViewModel]'s downloadingVideosList
+     * @param clip: The clip which download will be canceled
+     */
     private fun cancelDownloadWork(clip: ClipResponse) {
         context?.let {
             WorkManager.getInstance(it)
@@ -153,6 +171,9 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         }
     }
 
+    /**
+     * Resets the PlayerState
+     */
     override fun onDetach() {
         super.onDetach()
         playerViewModel.changePlayerState(null)

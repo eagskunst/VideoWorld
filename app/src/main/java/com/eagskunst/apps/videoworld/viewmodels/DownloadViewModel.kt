@@ -19,20 +19,32 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
     private val filesDirPath: String = context.filesDir.path
     private var downloadedVideosList = listOf<ClipResponse>()
     private val downloadingVideosList = mutableListOf<ClipResponse>()
-    val downloadWorksIds = mutableListOf<UUID>()
 
+    /**
+     * Updates the downloaded video list if the file of the Clip exists.
+     * @param clips: The clips from the response.
+     */
     fun updateDownloadedVideosList(clips: List<ClipResponse>) {
         downloadedVideosList = clips.filter {
             getClipFile(it).exists()
         }
     }
 
+    /**
+     * Adds a given clip [ClipResponse] to the downloadedVideosList
+     */
     fun updateDownloadedVideosList(clip: ClipResponse) {
         downloadedVideosList = downloadedVideosList.toMutableList().apply {
             add(clip)
         }
     }
 
+    /**
+     * Gets the download state of a clip.
+     * @param clip: The clip being evaluated
+     * @return Int from [DownloadState]. [DownloadState.DOWNLOADED] if the downloadedVideosList contains the
+     * clip. [DownloadState.DOWNLOADING] if the downloadingVideosList contains the clip. Else [DownloadState.NOT_DOWNLOADED]
+     */
     fun getDownloadStateForClip(clip: ClipResponse): Int {
         return when {
             downloadedVideosList.contains(clip) -> DownloadState.DOWNLOADED
@@ -41,11 +53,18 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
         }
     }
 
+
     fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
+
+
     fun removeVideoFromDownloadList(clip: ClipResponse) {
         downloadingVideosList.remove(clip)
     }
 
+    /**
+     * Deletes the clip files and removes it from the downloaded videos list
+     * @param clip: The clip to delete.
+     */
     fun deleteClipInFiles(clip: ClipResponse) {
         getClipFile(clip).delete()
         downloadedVideosList = downloadedVideosList.toMutableList().apply {
@@ -53,11 +72,22 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
         }
     }
 
-    //TODO: Should be in a VewModel for testing
+    /**
+     * Returns the last substring that comes after the last '/' in it.
+     * Eg: google.com/hello will return 'hello'
+     * @param clip: The clip that holds the URL.
+     * @return The suffix URL.
+     */
     fun getDownloadUrlOfClip(clip: ClipResponse): String? {
         return Regex("[^/]+\$").find(clip.getClipUrl())?.value
     }
 
+    /**
+     * Returns a [File] of a given clip. The file is created with the context.filesDirPath and the
+     * [ClipResponse.getClipFilename]
+     * @param clip: The clip of the file
+     * @return [File]
+     */
     fun getClipFile(clip: ClipResponse) = File("${filesDirPath}/${clip.getClipFilename()}")
 
     /**

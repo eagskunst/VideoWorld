@@ -16,6 +16,9 @@ import com.eagskunst.apps.videoworld.utils.DownloadState.NOT_DOWNLOADED
 
 /**
  * Created by eagskunst in 3/5/2020.
+ * Better create a custom viewholder to change the icon based on the downloadState.
+ * The other option was creating a single BindingAdapter function that will be available for any view
+ * in any layout...and only one use.
  */
 @EpoxyModelClass(layout = R.layout.view_holder_clip_info)
 abstract class ClipInfoView : EpoxyModelWithHolder<ClipInfoView.Holder>() {

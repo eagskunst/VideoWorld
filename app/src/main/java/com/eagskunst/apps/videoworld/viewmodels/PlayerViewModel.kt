@@ -19,6 +19,13 @@ class PlayerViewModel: BaseViewModel() {
         _playerStateLiveData.value = state
     }
 
+
+    /**
+     * Creates a new [Player.EventListener] that will automatically update the PlayerState of this ViewModel
+     * in order to perform an 'auto-play'
+     * @param state: The current player state. Needed to know if the state should be updated.
+     * @return [Player.EventListener] The event listener to be attached.
+     */
     fun createPlayerListener(state: PlayerState) = object: Player.EventListener {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             Timber.d("New playback state: $playbackState. Current position: ${state.currentPosition}.")
