@@ -6,17 +6,16 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.work.CoroutineWorker
-import androidx.work.ForegroundInfo
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.di.factories.ChildWorkerFactory
 import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
+import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -38,15 +37,20 @@ class VideoDownloadWorker @AssistedInject constructor(
         const val VIDEO_URL = "URL"
         const val DESIRED_FILENAME = "filename"
         const val CLIP_TITLE = "clip_title"
+        const val NOTIFICATION_ID = "notification_id"
+        const val DOWNLOAD_STATE = "DownloadState"
         private const val PROGRESS_MAX = 100
-        private const val NOTIFICATION_ID = 1
         private const val CHANNEL_ID = "VWCH1"
+    }
+
+    val notificationId: Int by lazy {
+        inputData.getInt(NOTIFICATION_ID, 1)
     }
 
     override suspend fun doWork(): Result {
         Timber.d("Clip title in inputData: ${inputData.getString(CLIP_TITLE)}")
-        val url = inputData.getString(VIDEO_URL) ?: return Result.failure()
-        val filename = inputData.getString(DESIRED_FILENAME) ?: return  Result.failure()
+        val url = inputData.getString(VIDEO_URL)!!
+        val filename = inputData.getString(DESIRED_FILENAME)!!
         val clipTitle = inputData.getString(CLIP_TITLE) ?: "Downloading clip"
         val foregroundInfo = createForegroundInfo(
             currentProgress = 0,
@@ -62,36 +66,29 @@ class VideoDownloadWorker @AssistedInject constructor(
                                      indeterminateProgress: Boolean = false,
                                      clipTitle: String): ForegroundInfo {
 
-        val id = "DownloadClip-VideoWorld"
-        val cancel = "Cancel"
-        // This PendingIntent can be used to cancel the worker
-        val intent = WorkManager.getInstance(applicationContext)
-            .createCancelPendingIntent(getId())
-
         // Create a Notification channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel()
         }
 
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, id)
+        val notificationBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle(clipTitle)
             .setTicker(clipTitle)
             .setProgress(PROGRESS_MAX, currentProgress, indeterminateProgress)
             .setContentText(progress)
             .setSmallIcon(R.drawable.ic_rewind)
             .setOngoing(onGoing)
-            .addAction(android.R.drawable.ic_delete, cancel, intent)
-            .setChannelId(CHANNEL_ID)
 
-        return ForegroundInfo(NOTIFICATION_ID, notificationBuilder.build())
+        return ForegroundInfo(notificationId, notificationBuilder.build())
     }
 
     private suspend fun download(url: String, outputFile: String, clipTitle: String): Result {
         return withContext(Dispatchers.IO){
+            var responseBody: ResponseBody? = null
             try {
                 Timber.d("Starting download of $outputFile from $url")
 
-                val responseBody = downloadApi.downloadVideo(url).body()
+                responseBody = downloadApi.downloadVideo(url).body()
                 val input = responseBody?.byteStream()
                 val file = File(context.filesDir, outputFile)
                 val fos = FileOutputStream(file)
@@ -118,12 +115,19 @@ class VideoDownloadWorker @AssistedInject constructor(
                 Timber.d("Video downloaded and saved.")
                 responseBody?.close()
                 setForeground(createForegroundInfo(currentProgress = 100, onGoing = false, clipTitle = clipTitle))
-                Result.success()
+                Result.success(createOutputData(true))
             } catch (e: Exception) {
                 e.printStackTrace()
-                Result.failure()
+                responseBody?.close()
+                Result.success(createOutputData(false))
             }
         }
+    }
+
+    private fun createOutputData(success: Boolean): Data {
+        return Data.Builder()
+            .putInt(DOWNLOAD_STATE, if(success) DownloadState.DOWNLOADED else DownloadState.NOT_DOWNLOADED)
+            .build()
     }
 
     private fun currentProgress(length: Double, bytesRed: Double): Int {

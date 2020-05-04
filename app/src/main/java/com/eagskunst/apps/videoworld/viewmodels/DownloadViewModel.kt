@@ -28,10 +28,8 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
     }
 
     fun updateDownloadedVideosList(clip: ClipResponse) {
-        if (getClipFile(clip).exists()){
-            downloadedVideosList = downloadedVideosList.toMutableList().apply {
-                add(clip)
-            }
+        downloadedVideosList = downloadedVideosList.toMutableList().apply {
+            add(clip)
         }
     }
 
@@ -45,8 +43,7 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
 
     fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
     fun removeVideoFromDownloadList(clip: ClipResponse) {
-        if (getClipFile(clip).exists())
-            downloadingVideosList.remove(clip)
+        downloadingVideosList.remove(clip)
     }
 
     fun deleteClipInFiles(clip: ClipResponse) {
@@ -62,5 +59,16 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
     }
 
     fun getClipFile(clip: ClipResponse) = File("${filesDirPath}/${clip.getClipFilename()}")
+
+    /**
+     * @param clip: The clip to be shown.
+     * @return The File path of the video or the URL to the video file.
+     */
+    fun getClipUrl(clip: ClipResponse): String {
+        return if( downloadedVideosList.contains(clip) )
+            getClipFile(clip).path
+        else
+            clip.getClipUrl()
+    }
 
 }

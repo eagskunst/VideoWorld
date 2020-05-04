@@ -91,6 +91,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
     }
 
     private fun handleDownloadAction(downloadState: Int, clip: ClipResponse) {
+        Timber.d("Doing click!")
         when (downloadState) {
             DownloadState.NOT_DOWNLOADED -> startDownloadWork(clip)
             DownloadState.DOWNLOADING -> cancelDownloadWork(clip)
@@ -101,49 +102,55 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
 
     private fun startDownloadWork(clip: ClipResponse) {
         val url = downloadViewModel.getDownloadUrlOfClip(clip)
-        Timber.d("Computed video url for download: $url")
+        Timber.d("Computed video URL suffix for download: $url")
 
         val data = Data.Builder()
             .putString(VideoDownloadWorker.VIDEO_URL, url)
             .putString(VideoDownloadWorker.DESIRED_FILENAME, clip.getClipFilename())
             .putString(VideoDownloadWorker.CLIP_TITLE, clip.title)
+            .putInt(VideoDownloadWorker.NOTIFICATION_ID, clip.viewCount)
             .build()
+
         val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()
             .setInputData(data)
             .addTag(clip.getClipFilename())
             .build()
 
-        downloadViewModel.addVideoToDownloadList(clip)
-
         WorkManager.getInstance(requireContext())
             .enqueue(request)
 
+        downloadViewModel.addVideoToDownloadList(clip)
+
         WorkManager.getInstance(requireContext())
-            .getWorkInfosByTagLiveData(clip.getClipFilename())
-            .observe(requireActivity(), Observer { worksInfo ->
-                if (worksInfo == null)
+            .getWorkInfoByIdLiveData(request.id)
+            .observe(requireActivity(), Observer { work ->
+                if (work == null)
                     return@Observer
 
-                val work = worksInfo[0]
-                if (work.state == WorkInfo.State.SUCCEEDED){
+                Timber.d("Work tag : ${work.tags}. Work state: ${work.state}")
+
+                val downloadState = work.outputData.getInt(VideoDownloadWorker.DOWNLOAD_STATE, DownloadState.DOWNLOADING)
+
+                if (downloadState == DownloadState.DOWNLOADED) {
                     downloadViewModel.removeVideoFromDownloadList(clip)
                     downloadViewModel.updateDownloadedVideosList(clip)
-                    twitchViewModel.getUserClips(twitchViewModel.currentUserId())
                 }
-                else if(work.state == WorkInfo.State.CANCELLED) {
-                    cancelDownloadWork(clip)
-                    twitchViewModel.getUserClips(twitchViewModel.currentUserId())
+                else if(downloadState == DownloadState.NOT_DOWNLOADED) {
+                    downloadViewModel.removeVideoFromDownloadList(clip)
                 }
+
+                twitchViewModel.getUserClips(twitchViewModel.currentUserId())
             })
 
     }
 
     private fun cancelDownloadWork(clip: ClipResponse) {
+        context?.let {
+            WorkManager.getInstance(it)
+                .cancelAllWorkByTag(clip.getClipFilename())
 
-        WorkManager.getInstance(requireContext())
-            .cancelAllWorkByTag(clip.getClipFilename())
-
-        downloadViewModel.removeVideoFromDownloadList(clip)
+            downloadViewModel.removeVideoFromDownloadList(clip)
+        }
     }
 
     override fun onDetach() {

@@ -6,8 +6,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
-import com.eagskunst.apps.videoworld.clipInfo
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
+import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
+import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import timber.log.Timber
@@ -45,7 +46,7 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
         binding.clipsRv.withModels {
             playerState.clipsList.forEach { clip ->
                 //Binding clip into view holder
-                clipInfo {
+                clipInfoView {
                     id(clip.id)
                     clip(clip)
                     viewClick { _, _, _, position ->
@@ -60,6 +61,7 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
                         else R.color.colorDefaultBg
 
                     backgroundColor(color)
+                    downloadClick {  _ -> /**/ }
                 }
             }
         }

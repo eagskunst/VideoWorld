@@ -36,15 +36,12 @@ abstract class ClipInfoView : EpoxyModelWithHolder<ClipInfoView.Holder>() {
             when (this@ClipInfoView.downloadState) {
                 NOT_DOWNLOADED -> {
                     downloadBtn.icon = ContextCompat.getDrawable(root.context, R.drawable.ic_file_download)
-                    downloadBtn.iconTint = ContextCompat.getColorStateList(root.context, android.R.color.black)
                 }
                 DOWNLOADING -> {
                     downloadBtn.icon = ContextCompat.getDrawable(root.context, R.drawable.ic_close)
-                    downloadBtn.iconTint = ContextCompat.getColorStateList(root.context, android.R.color.black)
                 }
                 DOWNLOADED -> {
-                    downloadBtn.icon = ContextCompat.getDrawable(root.context, R.drawable.ic_file_download)
-                    downloadBtn.iconTint = ContextCompat.getColorStateList(root.context, R.color.colorPrimary)
+                    downloadBtn.icon = ContextCompat.getDrawable(root.context, R.drawable.ic_delete_)
                 }
                 DO_NOT_SHOW -> {
                     downloadBtn.icon = null

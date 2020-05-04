@@ -22,6 +22,7 @@ import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentClipBinding
 import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
+import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
 import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.google.android.exoplayer2.Player
@@ -40,6 +41,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
 
     private val playerViewModel: PlayerViewModel by activityViewModels()
     private val orientationViewModel: OrientationViewModel by activityViewModels()
+    private val downloadViewModel: DownloadViewModel by activityViewModel { injector.downloadViewModel }
     private val dsFactory by lazy { injector.dataSourceFactory }
     private val player: SimpleExoPlayer by lazy {
         SimpleExoPlayer.Builder(requireContext()).build()
@@ -66,9 +68,10 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
                 player.removeListener(it)
             }
 
-            val videoSource = createVideoSource(
-                state.clipsList[state.currentPosition].getClipUrl()
-            )
+            val clip = state.clipsList[state.currentPosition]
+            val url = downloadViewModel.getClipUrl(clip)
+
+            val videoSource = createVideoSource(url)
 
             player.prepare(videoSource)
             player.playWhenReady = true
