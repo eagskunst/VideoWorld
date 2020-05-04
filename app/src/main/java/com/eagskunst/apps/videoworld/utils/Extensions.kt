@@ -35,14 +35,20 @@ fun SimpleExoPlayer.changeSpeed(speed: Float){
     setPlaybackParameters(PlaybackParameters(speed))
 }
 
+
 fun SimpleExoPlayer.updatePosition(newPosition: Int){
     seekTo(currentPosition + newPosition)
 }
 
+
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
+/**
+ * Start of functions extracted from Paulo's talk
+ */
 val Activity.injector get() = (application as ComponentProvider).appComponent
 val Fragment.injector get() = requireActivity().injector
+
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     crossinline provider: () -> T) = viewModels<T> {
@@ -51,6 +57,7 @@ inline fun <reified T : ViewModel> FragmentActivity.viewModel(
     }
 }
 
+
 inline fun <reified T : ViewModel> Fragment.activityViewModel(
     crossinline provider: () -> T) = activityViewModels<T> {
     object : ViewModelProvider.Factory {
@@ -58,12 +65,18 @@ inline fun <reified T : ViewModel> Fragment.activityViewModel(
     }
 }
 
+
 inline fun <reified T : ViewModel> Fragment.viewModel(
     crossinline provider: () -> T) = viewModels<T> {
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) = provider() as T
     }
 }
+
+/**
+ * Ends of functions extracted from Paulo's talk
+ */
+
 fun Activity.hideKeyboard() {
     val view = this.currentFocus
     if (view != null) {
@@ -73,9 +86,11 @@ fun Activity.hideKeyboard() {
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 }
 
+
 fun Fragment.hideKeyboard(){
     requireActivity().hideKeyboard()
 }
+
 
 fun Activity.showSnackbar(msg: String) {
     this.currentFocus?.let {
@@ -83,9 +98,11 @@ fun Activity.showSnackbar(msg: String) {
     }
 }
 
+
 fun Fragment.showSnackbar(msg: String) {
     view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show() }
 }
+
 
 fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
     val divider = DividerItemDecoration(
@@ -102,6 +119,7 @@ fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
     }
 }
 
+
 fun Int.formatInt(): String {
     val digits = log(this.toFloat(), 10.toFloat()).toInt() + 1
     if(digits < 4)
@@ -114,10 +132,12 @@ fun Int.formatInt(): String {
     return "${digitsStr[0]}M"
 }
 
+
 val Int.dp get() = (this /
         Resources.getSystem().displayMetrics.density).toInt()
 val Int.px get() = (this *
         Resources.getSystem().displayMetrics.density).toInt()
+
 
 fun Activity.isInPortrait() = requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT ||
         requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
