@@ -11,8 +11,7 @@ I recommend everyone that wants to understand Dagger2 and learn Dagger2 to [see 
 
 The code is well documented when it needs. Otherwise the functions are just one line or their self explain.
 
-If you are here only for the know-how, see the download-video branch. The MainActivity holds the main code
-for the custom control view of the SimplePlayerView is interactions and the DownloadWorker the download implementation.
+If you are here only for the know-how, see the download-video branch. The MainActivity holds the main code for the custom control view of the SimplePlayerView is interactions and the DownloadWorker the download implementation.
 
 ### Compiling
 After cloning and opening the project, you would need to create the `ApiKeys.kt` file under the `utils` folder, and add your proper API key from the [Twitch API](https://dev.twitch.tv/docs/).
@@ -30,6 +29,7 @@ I made this app for practice/professional purposes, but PR's are welcome!
 
 ### Libraries and other stuff applied
 * Exoplayer + custom controls views
+* Auto-playing feature
 * ViewPager2
 * Room
 * Data binding
