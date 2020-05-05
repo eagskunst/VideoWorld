@@ -1,12 +1,10 @@
 package com.eagskunst.apps.videoworld
 
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.work.Data
@@ -15,23 +13,15 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
-import com.google.android.exoplayer2.PlaybackParameters
+import com.eagskunst.apps.videoworld.utils.changeSpeed
+import com.eagskunst.apps.videoworld.utils.updatePosition
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.material.button.MaterialButton
-import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import timber.log.Timber
-import java.io.File
-import javax.inject.Inject
-import kotlin.reflect.typeOf
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         1.5f)
 
     var isPortrait = true
+
+    val dsFactory by inject<DataSource.Factory>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                 Timber.d("Url: $url")
                 val data = Data.Builder()
                     .putString(VideoDownloadWorker.VIDEO_URL, url)
+                    .putString(VideoDownloadWorker.DESIRED_FILENAME, "twitch-clip.mp4")
                     .build()
 
                 val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()
@@ -129,13 +122,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
-        val ds = get<DataSource.Factory>()
-        if (ds != null){
-            Timber.d("Ds type is cache data source:: ${
-            ds is CacheDataSourceFactory
-            }")
-        }
-        return ProgressiveMediaSource.Factory(ds)
+        return ProgressiveMediaSource.Factory(dsFactory)
             .createMediaSource(Uri.parse(currentUrl))
     }
 
@@ -164,13 +151,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-fun SimpleExoPlayer.changeSpeed(speed: Float){
-    setPlaybackParameters(PlaybackParameters(speed))
-}
-
-fun SimpleExoPlayer.updatePosition(newPosition: Int){
-    seekTo(currentPosition + newPosition)
-}
-
-fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.fragments.ClipFragment">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        app:show_buffering="always"
+        android:background="@android:color/black"
+        app:resize_mode="fit"
+        app:shutter_background_color="@android:color/black"
+        app:use_sensor_rotation="true"
+        app:player_layout_id="@layout/exo_simple_player_view"
+        app:controller_layout_id="@layout/custom_playback_view"
+        />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/clipTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/clipFragmentsPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

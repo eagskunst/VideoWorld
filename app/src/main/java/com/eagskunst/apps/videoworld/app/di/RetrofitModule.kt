@@ -3,6 +3,7 @@ package com.eagskunst.apps.videoworld.app.di
 import com.eagskunst.apps.videoworld.R
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -33,7 +34,9 @@ val retrofitModule = module {
 
     single(named(KoinQualifiers.TwitchApi)) {
         Retrofit.Builder()
-            .client(get())
+            .client(get<OkHttpClient>(
+                named(KoinQualifiers.TwitchApi)
+            ))
             .addConverterFactory(MoshiConverterFactory.create(get()))
             .baseUrl(
                 get<String>(

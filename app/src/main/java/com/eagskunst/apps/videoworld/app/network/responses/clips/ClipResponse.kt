@@ -1,7 +1,11 @@
 package com.eagskunst.apps.videoworld.app.network.responses.clips
 
 
+import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
+import com.eagskunst.apps.videoworld.utils.Constants
+import com.eagskunst.apps.videoworld.utils.formatInt
 import com.squareup.moshi.Json
+import java.util.Date
 
 data class ClipResponse(
     @Json(name = "broadcaster_id")
@@ -32,4 +36,26 @@ data class ClipResponse(
     val videoId: String,
     @Json(name = "view_count")
     val viewCount: Int
-)
+) {
+    val viewCountFormatted = "Views: ${viewCount.formatInt()}"
+
+    fun dateFormatted(): String {
+        val date = Constants.TWITCH_DATE_SDF.parse(createdAt)
+        return Constants.GLOBAL_SDF.format(date ?: Date())
+    }
+
+    /**
+     * The regex removes the data of the thumbnail (width, height) and gives
+     * the clean url.
+     */
+    fun getClipUrl(): String = Regex(".*(?=-preview)").run {
+        "${find(thumbnailUrl)?.value}.mp4"
+    }
+
+    /**
+     * The default filename is the clip id along the .mp4 extension
+     * This will also be the tag of the [VideoDownloadWorker]
+     * for easy canceling.
+     */
+    fun getClipFilename() = "$id.mp4"
+}
