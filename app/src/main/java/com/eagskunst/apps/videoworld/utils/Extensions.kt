@@ -24,6 +24,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.log
 
@@ -144,3 +145,6 @@ fun Activity.isInPortrait() = requestedOrientation == ActivityInfo.SCREEN_ORIENT
         requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT ||
         requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT ||
         requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+val WorkInfo.State.isCancelled get() =
+    this == WorkInfo.State.CANCELLED || this == WorkInfo.State.FAILED

@@ -1,12 +1,14 @@
 package com.eagskunst.apps.videoworld.app.di.component
 
 import android.content.Context
+import androidx.work.WorkManager
 import androidx.work.WorkerFactory
 import com.eagskunst.apps.videoworld.app.VideoWorldApp
 import com.eagskunst.apps.videoworld.app.di.modules.*
 import com.eagskunst.apps.videoworld.app.di.scopes.AppScope
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.utils.UserPreferences
+import com.eagskunst.apps.videoworld.utils.WorkStateHandler
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
 import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
@@ -19,7 +21,7 @@ import dagger.Component
  */
 @AppScope
 @Component(modules = [ApiModule::class, WorkerAssistedModule::class, WorkersModule::class,
-    ExoPlayerModule::class, DatabaseModule::class])
+    ExoPlayerModule::class, DatabaseModule::class, WorkModule::class])
 interface AppComponent {
 
     @Component.Factory
@@ -33,4 +35,5 @@ interface AppComponent {
     val commentsViewModel: CommentsViewModel
     val userPreferences: UserPreferences
     val downloadViewModel: DownloadViewModel
+    val workStateHandler: WorkStateHandler
 }

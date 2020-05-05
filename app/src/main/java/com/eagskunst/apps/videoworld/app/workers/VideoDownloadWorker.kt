@@ -86,12 +86,16 @@ class VideoDownloadWorker @AssistedInject constructor(
             createChannel()
         }
 
+        val intent = WorkManager.getInstance(applicationContext)
+            .createCancelPendingIntent(id)
+
         val notificationBuilder = NotificationCompat.Builder(applicationContext, CHANNEL_ID)
             .setContentTitle(clipTitle)
             .setTicker(clipTitle)
             .setProgress(PROGRESS_MAX, currentProgress, indeterminateProgress)
             .setContentText(progress)
             .setSmallIcon(R.drawable.ic_rewind)
+            .addAction(R.drawable.ic_close, "Cancel", intent)
             .setOngoing(onGoing)
 
         return ForegroundInfo(notificationId, notificationBuilder.build())
@@ -113,15 +117,18 @@ class VideoDownloadWorker @AssistedInject constructor(
     private suspend fun download(url: String, outputFile: String, clipTitle: String): Result {
         return withContext(Dispatchers.IO){
             var responseBody: ResponseBody? = null
+            var file: File? = null
+            var fos: FileOutputStream? = null
             try {
                 Timber.d("Starting download of $outputFile from $url")
 
                 responseBody = downloadApi.downloadVideo(url).body()
                 val input = responseBody?.byteStream()
-                val file = File(context.filesDir, outputFile)
-                val fos = FileOutputStream(file)
                 val length = responseBody?.contentLength() ?: 0
                 var bytesRed = 0
+
+                file = File(context.filesDir, outputFile)
+                fos = FileOutputStream(file)
 
                 fos.use { output ->
                     val buffer = ByteArray(4 * 1024)
@@ -147,6 +154,8 @@ class VideoDownloadWorker @AssistedInject constructor(
             } catch (e: Exception) {
                 e.printStackTrace()
                 responseBody?.close()
+                fos?.close()
+                file?.delete()
                 Result.success(createOutputData(false))
             }
         }
