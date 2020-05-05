@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     var isPortrait = true
 
-    val dsFactory by inject<DataSource.Factory>()
+    private val dsFactory by inject<DataSource.Factory>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

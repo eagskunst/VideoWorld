@@ -7,19 +7,16 @@ import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.eagskunst.apps.videoworld.databinding.FragmentAddCommentBinding
 import com.eagskunst.apps.videoworld.ui.fragments.CLIP_ID
-import com.eagskunst.apps.videoworld.utils.activityViewModel
-import com.eagskunst.apps.videoworld.utils.injector
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 /**
  * Created by eagskunst in 3/5/2020.
  */
 class AddCommentBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private val commentViewModel: CommentsViewModel by activityViewModel {
-        injector.commentsViewModel
-    }
+    private val commentViewModel: CommentsViewModel by sharedViewModel()
 
     private var _binding: FragmentAddCommentBinding? = null
     private val binding: FragmentAddCommentBinding

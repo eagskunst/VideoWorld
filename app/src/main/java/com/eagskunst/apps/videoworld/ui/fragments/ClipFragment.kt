@@ -13,15 +13,16 @@ import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentClipBinding
-import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
+import com.eagskunst.apps.videoworld.utils.changeSpeed
+import com.eagskunst.apps.videoworld.utils.isInPortrait
+import com.eagskunst.apps.videoworld.utils.px
+import com.eagskunst.apps.videoworld.utils.updatePosition
 import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
 import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
@@ -29,8 +30,11 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 const val CLIP_ID = "CLIP_ID"
 class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), Player.EventListener {
@@ -38,10 +42,10 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
     override val bindingFunction: (view: View) -> FragmentClipBinding
         get() = FragmentClipBinding::bind
 
-    private val playerViewModel: PlayerViewModel by activityViewModels()
-    private val orientationViewModel: OrientationViewModel by activityViewModels()
-    private val downloadViewModel: DownloadViewModel by activityViewModel { injector.downloadViewModel }
-    private val dsFactory by lazy { injector.dataSourceFactory }
+    private val playerViewModel: PlayerViewModel by sharedViewModel()
+    private val orientationViewModel: OrientationViewModel by sharedViewModel()
+    private val downloadViewModel: DownloadViewModel by sharedViewModel()
+    private val dsFactory by inject<DataSource.Factory>()
     private val player: SimpleExoPlayer by lazy {
         SimpleExoPlayer.Builder(requireContext()).build()
     }

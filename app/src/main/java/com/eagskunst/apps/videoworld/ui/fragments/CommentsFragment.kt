@@ -3,7 +3,6 @@ package com.eagskunst.apps.videoworld.ui.fragments
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.comment
@@ -11,11 +10,10 @@ import com.eagskunst.apps.videoworld.databinding.FragmentCommentsBinding
 import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.emptiness
 import com.eagskunst.apps.videoworld.ui.dialogs.AddCommentBottomSheetFragment
-import com.eagskunst.apps.videoworld.utils.activityViewModel
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
-import com.eagskunst.apps.videoworld.utils.injector
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 
 class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment_comments) {
@@ -23,11 +21,9 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
     override val bindingFunction: (view: View) -> FragmentCommentsBinding
         get() = FragmentCommentsBinding::bind
 
-    private val commentsViewModel: CommentsViewModel by activityViewModel {
-        injector.commentsViewModel
-    }
+    private val commentsViewModel: CommentsViewModel by sharedViewModel()
 
-    private val playerViewModel: PlayerViewModel by activityViewModels()
+    private val playerViewModel: PlayerViewModel by sharedViewModel()
     private var currentClipId = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

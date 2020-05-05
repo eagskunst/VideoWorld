@@ -3,6 +3,8 @@ package com.eagskunst.apps.videoworld.ui.activities
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
 import org.koin.android.viewmodel.ext.android.viewModel

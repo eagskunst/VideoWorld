@@ -19,11 +19,8 @@ ext {
     espressoVersion = '3.2.0'
     coroutinesVersion = '1.3.4'
     assisInjVersion = '0.5.2'
-<<<<<<< HEAD
     koinVersion = "2.1.5"
-=======
     fragmentVersion = '1.2.4'
->>>>>>> master
 }
 
 buildscript {

@@ -2,10 +2,8 @@ package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.work.*
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
@@ -14,11 +12,15 @@ import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
 import com.eagskunst.apps.videoworld.progressBar
 import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
-import com.eagskunst.apps.videoworld.utils.*
+import com.eagskunst.apps.videoworld.utils.DownloadState
+import com.eagskunst.apps.videoworld.utils.WorkStateHandler
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
+import com.eagskunst.apps.videoworld.utils.isCancelled
 import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 
 class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
@@ -26,17 +28,11 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
     override val bindingFunction: (view: View) -> FragmentClipsBinding
         get() = FragmentClipsBinding::bind
 
-    private val twitchViewModel: TwitchViewModel by activityViewModel {
-        injector.twitchViewModel
-    }
-    private val downloadViewModel: DownloadViewModel by activityViewModel() {
-        injector.downloadViewModel
-    }
-    private val playerViewModel: PlayerViewModel by activityViewModels()
+    private val twitchViewModel: TwitchViewModel by sharedViewModel()
+    private val downloadViewModel: DownloadViewModel by sharedViewModel()
+    private val playerViewModel: PlayerViewModel by sharedViewModel()
 
-    private val workStateHandler: WorkStateHandler by lazy {
-        injector.workStateHandler
-    }
+    private val workStateHandler: WorkStateHandler by inject()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

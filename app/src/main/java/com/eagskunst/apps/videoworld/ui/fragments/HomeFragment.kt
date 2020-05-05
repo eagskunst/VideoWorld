@@ -11,6 +11,7 @@ import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.squareup.picasso.Picasso
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
@@ -18,9 +19,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         get() = FragmentHomeBinding::bind
 
 
-    private val twitchViewModel: TwitchViewModel by activityViewModel {
-        injector.twitchViewModel
-    }
+    private val twitchViewModel: TwitchViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
