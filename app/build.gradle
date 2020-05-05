@@ -51,9 +51,17 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation "com.google.android.material:material:1.1.0"
+    implementation "androidx.preference:preference:1.1.1"
+
+    implementation 'androidx.activity:activity-ktx:1.1.0'
+    implementation "androidx.fragment:fragment:$fragmentVersion"
+    implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
+
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
@@ -67,6 +75,9 @@ dependencies {
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$workVersion"
 
+    //Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
@@ -98,11 +109,15 @@ dependencies {
     compileOnly "com.squareup.inject:assisted-inject-annotations-dagger2:$assisInjVersion"
     kapt "com.squareup.inject:assisted-inject-processor-dagger2:$assisInjVersion"
 
-    // Koin for Android
-    implementation "org.koin:koin-android:$koinVersion"
-    // or Koin for Lifecycle scoping
-    implementation "org.koin:koin-android-scope:$koinVersion"
-    // or Koin for Android Architecture ViewModel
-    implementation "org.koin:koin-android-viewmodel:$koinVersion"
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    //ViewPager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+
+    //Room
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-ktx:$roomVersion"
 
 }
