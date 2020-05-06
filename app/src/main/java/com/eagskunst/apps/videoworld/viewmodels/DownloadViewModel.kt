@@ -5,7 +5,6 @@ import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**

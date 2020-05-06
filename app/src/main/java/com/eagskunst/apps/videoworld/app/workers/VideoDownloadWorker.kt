@@ -8,13 +8,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.*
 import com.eagskunst.apps.videoworld.R
-import com.eagskunst.apps.videoworld.app.di.factories.ChildWorkerFactory
 import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
-import com.eagskunst.apps.videoworld.utils.DownloadState
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.koin.core.KoinComponent
+import org.koin.core.inject
+import com.eagskunst.apps.videoworld.utils.DownloadState
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.http.Streaming
@@ -30,14 +29,9 @@ import java.io.FileOutputStream
  * [Data] inputData.
  * This is created as a background work, and show a notification with the current progress.
  */
-class VideoDownloadWorker @AssistedInject constructor(
-    @Assisted private val context: Context,
-    @Assisted params: WorkerParameters,
-    private val downloadApi: TwitchDownloadApi): CoroutineWorker(context, params) {
-
-    private val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as
-                NotificationManager
+class VideoDownloadWorker(
+    private val context: Context,
+    params: WorkerParameters): CoroutineWorker(context, params), KoinComponent {
 
     companion object {
         const val WORK_NAME = "DownloadWork"
@@ -49,6 +43,12 @@ class VideoDownloadWorker @AssistedInject constructor(
         private const val PROGRESS_MAX = 100
         private const val CHANNEL_ID = "VWCH1"
     }
+
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+
+    private val downloadApi: TwitchDownloadApi by inject()
 
     private val notificationId: Int by lazy {
         inputData.getInt(NOTIFICATION_ID, 1)
@@ -197,6 +197,4 @@ class VideoDownloadWorker @AssistedInject constructor(
         notificationManager.createNotificationChannel(mChannel)
     }
 
-    @AssistedInject.Factory
-    interface Factory : ChildWorkerFactory
 }

@@ -7,20 +7,20 @@ import android.view.View
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
-import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
+import androidx.work.workDataOf
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
-import com.eagskunst.apps.videoworld.utils.*
+import com.eagskunst.apps.videoworld.utils.changeSpeed
+import com.eagskunst.apps.videoworld.utils.updatePosition
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerView
+import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.material.button.MaterialButton
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -40,9 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     var isPortrait = true
 
-    private val dsFactory by lazy {
-        injector.dataSourceFactory
-    }
+    private val dsFactory by inject<DataSource.Factory>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +66,10 @@ class MainActivity : AppCompatActivity() {
             downloadBtn.setOnClickListener {
                 val url = getUrlFromCurrentClip(currentUrl)
                 Timber.d("Url: $url")
-                val data = Data.Builder()
-                    .putString(VideoDownloadWorker.VIDEO_URL, url)
-                    .putString(VideoDownloadWorker.DESIRED_FILENAME, "twitch-clip.mp4")
-                    .build()
+                val data = workDataOf(
+                    VideoDownloadWorker.VIDEO_URL to url,
+                    VideoDownloadWorker.DESIRED_FILENAME to "twitch-clip.mp4"
+                )
 
                 val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()
                     .setInputData(data)
@@ -124,7 +122,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
-        //Video files dir url => "${filesDir.path}/download-video-videoworld.mp4"
         return ProgressiveMediaSource.Factory(dsFactory)
             .createMediaSource(Uri.parse(currentUrl))
     }

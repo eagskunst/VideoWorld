@@ -11,14 +11,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.DrawableRes
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import com.eagskunst.apps.videoworld.app.di.component.ComponentProvider
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.SimpleExoPlayer
 import androidx.lifecycle.ViewModelProvider
@@ -47,8 +45,8 @@ fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).s
 /**
  * Start of functions extracted from Paulo's talk
  */
-val Activity.injector get() = (application as ComponentProvider).appComponent
-val Fragment.injector get() = requireActivity().injector
+//val Activity.injector get() = (application as ComponentProvider).appComponent
+//val Fragment.injector get() = requireActivity().injector
 
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(

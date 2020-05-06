@@ -10,8 +10,7 @@ import javax.inject.Inject
 /**
  * Created by eagskunst in 1/5/2020.
  */
-@Reusable
-class TwitchRemoteRepository @Inject constructor(
+class TwitchRemoteRepository(
     private val userApi: UserApi,
     private val clipsApi: ClipsApi): BaseRemoteRepository() {
 

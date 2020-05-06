@@ -78,6 +78,7 @@ dependencies {
     //Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.2'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.2'
+    implementation 'androidx.navigation:navigation-runtime:2.2.2'
 
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion"
@@ -119,5 +120,10 @@ dependencies {
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
+
+    // Koin for Android
+    implementation "org.koin:koin-android:$koinVersion"
+    implementation "org.koin:koin-android-scope:$koinVersion"
+    implementation "org.koin:koin-android-viewmodel:$koinVersion"
 
 }

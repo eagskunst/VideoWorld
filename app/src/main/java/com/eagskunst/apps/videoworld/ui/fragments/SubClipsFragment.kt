@@ -2,16 +2,15 @@ package com.eagskunst.apps.videoworld.ui.fragments
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
 import com.eagskunst.apps.videoworld.ui.view_holders.ClipInfoView
 import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
-import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
+import org.koin.android.viewmodel.ext.android.sharedViewModel
 import timber.log.Timber
 
 /**
@@ -22,7 +21,7 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
     override val bindingFunction: (view: View) -> FragmentClipsBinding
         get() = FragmentClipsBinding::bind
 
-    private val playerViewModel: PlayerViewModel by activityViewModels()
+    private val playerViewModel: PlayerViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,11 +58,13 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
                     id(clip.id)
                     clip(clip)
                     viewClick { _, _, _, position ->
-                        playerViewModel.changePlayerState(
-                            playerState.copy(
-                                currentPosition = position
+                        if(playerState.currentPosition != position){
+                            playerViewModel.changePlayerState(
+                                playerState.copy(
+                                    currentPosition = position
+                                )
                             )
-                        )
+                        }
                     }
                     val color =
                         if (clip == playerState.clipsList[playerState.currentPosition]) R.color.colorAccent
