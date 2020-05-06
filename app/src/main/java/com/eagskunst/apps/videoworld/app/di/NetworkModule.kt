@@ -31,7 +31,7 @@ val networkModule = module {
 
     single { Cache(get(), 10*1000*1000) }
 
-    single {
+    factory {
         OkHttpClient.Builder()
             .addInterceptor( get<HttpLoggingInterceptor>() )
             .addInterceptor { chain ->

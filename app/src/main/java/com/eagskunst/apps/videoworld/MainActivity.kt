@@ -7,10 +7,10 @@ import android.view.View
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.ActivityMainBinding
 import com.eagskunst.apps.videoworld.utils.changeSpeed
@@ -66,10 +66,10 @@ class MainActivity : AppCompatActivity() {
             downloadBtn.setOnClickListener {
                 val url = getUrlFromCurrentClip(currentUrl)
                 Timber.d("Url: $url")
-                val data = Data.Builder()
-                    .putString(VideoDownloadWorker.VIDEO_URL, url)
-                    .putString(VideoDownloadWorker.DESIRED_FILENAME, "twitch-clip.mp4")
-                    .build()
+                val data = workDataOf(
+                    VideoDownloadWorker.VIDEO_URL to url,
+                    VideoDownloadWorker.DESIRED_FILENAME to "twitch-clip.mp4"
+                )
 
                 val request = OneTimeWorkRequestBuilder<VideoDownloadWorker>()
                     .setInputData(data)

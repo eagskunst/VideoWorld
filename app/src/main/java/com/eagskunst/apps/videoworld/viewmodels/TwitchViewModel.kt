@@ -3,15 +3,12 @@ package com.eagskunst.apps.videoworld.viewmodels
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 /**

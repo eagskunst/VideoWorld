@@ -10,11 +10,12 @@ import org.koin.dsl.module
 
 /**
  * Created by eagskunst in 5/5/2020.
+ * We don't need to share instances of repositories. Better use Factory.
  */
 
 val repositoriesModule = module {
-    single { CommentsLocalRepository(get()) }
-    single { CommentsRepository(get()) }
-    single { TwitchRemoteRepository(get<UserApi>(), get<ClipsApi>()) }
-    single { TwitchRepository(get()) }
+    factory { CommentsLocalRepository(get()) }
+    factory { CommentsRepository(get()) }
+    factory { TwitchRemoteRepository(get<UserApi>(), get<ClipsApi>()) }
+    factory { TwitchRepository(get()) }
 }

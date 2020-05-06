@@ -33,12 +33,6 @@ class VideoDownloadWorker(
     private val context: Context,
     params: WorkerParameters): CoroutineWorker(context, params), KoinComponent {
 
-    private val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as
-                NotificationManager
-
-    private val downloadApi: TwitchDownloadApi by inject()
-
     companion object {
         const val WORK_NAME = "DownloadWork"
         const val VIDEO_URL = "URL"
@@ -49,6 +43,12 @@ class VideoDownloadWorker(
         private const val PROGRESS_MAX = 100
         private const val CHANNEL_ID = "VWCH1"
     }
+
+    private val notificationManager =
+        context.getSystemService(Context.NOTIFICATION_SERVICE) as
+                NotificationManager
+
+    private val downloadApi: TwitchDownloadApi by inject()
 
     private val notificationId: Int by lazy {
         inputData.getInt(NOTIFICATION_ID, 1)

@@ -1,5 +1,7 @@
 package com.eagskunst.apps.videoworld.app.di
 
+import android.content.Context
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
@@ -15,7 +17,7 @@ import java.io.File
 
 val exoplayerModule = module {
 
-    single { (100 * 1024 * 1024).toLong() }
+    factory { (100 * 1024 * 1024).toLong() }
 
     single<CacheEvictor> { LeastRecentlyUsedCacheEvictor(get()) }
 
@@ -38,4 +40,6 @@ val exoplayerModule = module {
     single <DataSource.Factory> {
         CacheDataSourceFactory(get<SimpleCache>(), get<DefaultDataSourceFactory>())
     }
+
+    factory { (context: Context) -> SimpleExoPlayer.Builder(context).build() }
 }

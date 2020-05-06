@@ -35,9 +35,10 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.sharedViewModel
+import org.koin.core.parameter.parametersOf
 
 const val CLIP_ID = "CLIP_ID"
-class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), Player.EventListener {
+class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
 
     override val bindingFunction: (view: View) -> FragmentClipBinding
         get() = FragmentClipBinding::bind
@@ -46,9 +47,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip), 
     private val orientationViewModel: OrientationViewModel by sharedViewModel()
     private val downloadViewModel: DownloadViewModel by sharedViewModel()
     private val dsFactory by inject<DataSource.Factory>()
-    private val player: SimpleExoPlayer by lazy {
-        SimpleExoPlayer.Builder(requireContext()).build()
-    }
+    private val player: SimpleExoPlayer by inject { parametersOf(requireContext()) }
     //Playback speeds for ExoPlayer
     private val speeds = listOf(
         0.5f,

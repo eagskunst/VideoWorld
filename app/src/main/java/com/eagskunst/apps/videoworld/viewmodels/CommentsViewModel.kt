@@ -5,12 +5,11 @@ import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class CommentsViewModel @Inject constructor(private val commentsRepository: CommentsRepository): BaseViewModel() {
+class CommentsViewModel (private val commentsRepository: CommentsRepository): BaseViewModel() {
 
     val commentsLiveData = commentsRepository.commentsLiveData()
 
