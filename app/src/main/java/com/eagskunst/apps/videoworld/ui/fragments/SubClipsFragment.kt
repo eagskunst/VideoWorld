@@ -58,11 +58,13 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
                     id(clip.id)
                     clip(clip)
                     viewClick { _, _, _, position ->
-                        playerViewModel.changePlayerState(
-                            playerState.copy(
-                                currentPosition = position
+                        if(playerState.currentPosition != position){
+                            playerViewModel.changePlayerState(
+                                playerState.copy(
+                                    currentPosition = position
+                                )
                             )
-                        )
+                        }
                     }
                     val color =
                         if (clip == playerState.clipsList[playerState.currentPosition]) R.color.colorAccent
