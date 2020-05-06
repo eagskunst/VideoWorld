@@ -1,5 +1,8 @@
 package com.eagskunst.apps.videoworld.app.di
 
+import androidx.room.Room
+import com.eagskunst.apps.videoworld.db.VideoWorldDatabase
+import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 
@@ -9,19 +12,13 @@ import org.koin.dsl.module
 
 val databaseModule = module {
     single {
-        //TODO: Create RoomDb:
-        /*
-        VideoWorldDatabase = Room.databaseBuilder(
-        context,
+        Room.databaseBuilder(
+        androidApplication(),
         VideoWorldDatabase::class.java,
         "VideoWorldDatabase")
         .build()
-         */
     }
     single {
-        //TODO: comments dao
-        /**
-         * db.commentsDao()
-         */
+       get<VideoWorldDatabase>().commentsDao()
     }
 }

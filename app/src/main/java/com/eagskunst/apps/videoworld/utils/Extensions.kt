@@ -45,8 +45,8 @@ fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).s
 /**
  * Start of functions extracted from Paulo's talk
  */
-val Activity.injector get() = (application as ComponentProvider).appComponent
-val Fragment.injector get() = requireActivity().injector
+//val Activity.injector get() = (application as ComponentProvider).appComponent
+//val Fragment.injector get() = requireActivity().injector
 
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(

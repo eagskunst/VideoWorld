@@ -1,7 +1,7 @@
 package com.eagskunst.apps.videoworld.app.di
 
-import android.content.Context
 import androidx.work.WorkManager
+import com.eagskunst.apps.videoworld.utils.WorkStateHandler
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
@@ -11,4 +11,5 @@ import org.koin.dsl.module
 
 val workModule = module {
     single { WorkManager.getInstance(androidApplication()) }
+    factory { WorkStateHandler(get()) }
 }

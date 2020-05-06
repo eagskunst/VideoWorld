@@ -32,6 +32,7 @@ class VideoWorldApp: Application(){
     }
 
     private fun getModules() = networkModule + retrofitModule + apiModule +
-    exoplayerModule + databaseModule + workModule
+    exoplayerModule + databaseModule + workModule + repositoriesModule +
+            viewModelModule
 
 }
