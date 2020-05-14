@@ -15,8 +15,8 @@ The code is well documented when it needs. Otherwise the functions are just one 
 If you are here only for the know-how, see the download-video branch. The MainActivity holds the main code for the custom control view of the SimplePlayerView is interactions and the DownloadWorker the download implementation.
 
 ### Compiling
-After cloning and opening the project, you would need to create the `ApiKeys.kt` file under the `utils` folder, and add your proper API key from the [Twitch API](https://dev.twitch.tv/docs/)
-with a variable named `TWITCH_CLIENT_ID`.
+After cloning and opening the project, you would need to create the `ApiKeys.kt` file under the `utils` folder, and add your proper Client-ID and Client-Secret from the [Twitch API](https://dev.twitch.tv/docs/).
+Create a variable named `TWITCH_CLIENT_ID` and a variable named `CLIENT_SECRET` in the `ApiKeys` file.
 
 ### Modifying
 #### Folder structure

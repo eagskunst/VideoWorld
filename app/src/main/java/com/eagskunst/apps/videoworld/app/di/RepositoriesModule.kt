@@ -1,6 +1,7 @@
 package com.eagskunst.apps.videoworld.app.di
 
 import com.eagskunst.apps.videoworld.app.network.api.ClipsApi
+import com.eagskunst.apps.videoworld.app.network.api.TwitchAuthApi
 import com.eagskunst.apps.videoworld.app.network.api.UserApi
 import com.eagskunst.apps.videoworld.app.repositories.CommentsLocalRepository
 import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
@@ -16,6 +17,6 @@ import org.koin.dsl.module
 val repositoriesModule = module {
     factory { CommentsLocalRepository(get()) }
     factory { CommentsRepository(get()) }
-    factory { TwitchRemoteRepository(get<UserApi>(), get<ClipsApi>()) }
+    factory { TwitchRemoteRepository(get<UserApi>(), get<ClipsApi>(), get<TwitchAuthApi>()) }
     factory { TwitchRepository(get()) }
 }

@@ -15,4 +15,6 @@ class TwitchRepository (private val remoteRepository: TwitchRemoteRepository) {
                              remoteErrorEmitter: RemoteErrorEmitter
     ) = remoteRepository.getUserClips(userId, remoteErrorEmitter)
 
+    suspend fun authUser(remoteErrorEmitter: RemoteErrorEmitter) = remoteRepository.getAuthToken(remoteErrorEmitter)
+
 }

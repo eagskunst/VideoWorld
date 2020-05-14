@@ -24,6 +24,12 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
     fun currentUserId() = userData.value?.dataList?.get(0)?.id ?: ""
     fun clipsListExists() = userClips.value != null
 
+    init {
+        viewModelScope.launch {
+            repository.authUser(this@TwitchViewModel)
+        }
+    }
+
     fun getUserByInput(input: String){
         viewModelScope.launch {
             _progressVisibility.value = View.VISIBLE

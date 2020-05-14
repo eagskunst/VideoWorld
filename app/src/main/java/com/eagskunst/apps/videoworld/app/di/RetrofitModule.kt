@@ -21,13 +21,19 @@ val retrofitModule = module {
         .build()
     }
 
-    single(named(KoinQualifiers.TwitchApi)) {
+    factory(named(KoinQualifiers.TwitchApi)) {
         val res = androidContext().resources
         res.getString(R.string.twitch_api_url)
     }
 
 
-    single(named(KoinQualifiers.ClipsApi)) {
+    factory(named(KoinQualifiers.TwitchAuth)) {
+        val res = androidContext().resources
+        res.getString(R.string.twitch_auth_url)
+    }
+
+
+    factory(named(KoinQualifiers.ClipsApi)) {
         val res = androidContext().resources
         res.getString(R.string.twitch_clips_url)
     }
@@ -53,6 +59,20 @@ val retrofitModule = module {
             .baseUrl(
                 get<String>(
                     named(KoinQualifiers.ClipsApi)
+                )
+            )
+            .build()
+    }
+
+    single(named(KoinQualifiers.TwitchAuth)) {
+        Retrofit.Builder()
+            .client(get<OkHttpClient>(
+                named(KoinQualifiers.TwitchAuth)
+            ))
+            .addConverterFactory(MoshiConverterFactory.create(get()))
+            .baseUrl(
+                get<String>(
+                    named(KoinQualifiers.TwitchAuth)
                 )
             )
             .build()

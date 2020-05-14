@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="twitch_auth_url">https://id.twitch.tv/</string>
     <string name="twitch_api_url">https://api.twitch.tv/helix/</string>
     <string name="twitch_clips_url">https://clips-media-assets2.twitch.tv/</string>
 </resources>

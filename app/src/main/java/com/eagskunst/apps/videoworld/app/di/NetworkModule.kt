@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by eagskunst in 30/4/2020.
  */
-
+var SESSION_TOKEN = ""
 val networkModule = module {
 
     single {
@@ -31,7 +31,7 @@ val networkModule = module {
 
     single { Cache(get(), 10*1000*1000) }
 
-    factory {
+    single {
         OkHttpClient.Builder()
             .addInterceptor( get<HttpLoggingInterceptor>() )
             .addInterceptor { chain ->
@@ -55,7 +55,17 @@ val networkModule = module {
             .cache(get())
     }
 
-    single(named(KoinQualifiers.TwitchApi)) {
+    factory (named(KoinQualifiers.TwitchApi)) {
+        get<OkHttpClient.Builder>().addInterceptor { chain ->
+            val requestBuilder = chain.request().newBuilder()
+                .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)
+                .addHeader("Authorization", "Bearer $SESSION_TOKEN")
+            val request = requestBuilder.build()
+            chain.proceed(request)
+        }.build()
+    }
+
+    factory (named(KoinQualifiers.TwitchAuth)) {
         get<OkHttpClient.Builder>().addInterceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
                 .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)

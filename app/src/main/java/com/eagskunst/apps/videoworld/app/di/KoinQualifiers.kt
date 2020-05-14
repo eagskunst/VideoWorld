@@ -5,6 +5,7 @@ package com.eagskunst.apps.videoworld.app.di
  */
 enum class KoinQualifiers {
     TwitchApi,
+    TwitchAuth,
     ClipsApi,
     ExoPlayer
 }
