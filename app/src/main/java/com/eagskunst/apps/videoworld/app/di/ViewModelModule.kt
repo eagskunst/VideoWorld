@@ -13,7 +13,7 @@ import org.koin.dsl.module
 
 val viewModelModule = module {
     viewModel { CommentsViewModel(get()) }
-    viewModel { DownloadViewModel(androidContext()) }
+    viewModel { DownloadViewModel(androidContext().filesDir.path) }
     viewModel { OrientationViewModel() }
     viewModel { PlayerViewModel() }
     viewModel { TwitchViewModel(get()) }

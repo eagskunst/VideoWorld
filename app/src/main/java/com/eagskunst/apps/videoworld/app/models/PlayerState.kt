@@ -13,5 +13,10 @@ data class PlayerState(
     val clipsList: List<ClipResponse>,
     val currentPosition: Int
 ) {
+
+    init {
+        require(currentPosition >= 0)
+    }
+
     val maxPosition: Int = clipsList.size
 }

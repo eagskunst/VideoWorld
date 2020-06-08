@@ -12,10 +12,8 @@ import javax.inject.Inject
  * Context is only used for getting the filesDir is path. Do not worry about
  * leaks of the variable as is only used in the constructor scope
  */
-class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
+class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
 
-
-    private val filesDirPath: String = context.filesDir.path
     private var downloadedVideosList = listOf<ClipResponse>()
     private val downloadingVideosList = mutableListOf<ClipResponse>()
 

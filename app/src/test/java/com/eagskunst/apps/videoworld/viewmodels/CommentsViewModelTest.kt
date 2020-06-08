@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld
+package com.eagskunst.apps.videoworld.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
@@ -27,6 +27,7 @@ class CommentsViewModelTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+    lateinit var repository: CommentsRepository
     lateinit var viewModel: CommentsViewModel
     private val mockComment by lazy {
         com.eagskunst.apps.videoworld.testShared.builders.comment {
@@ -42,23 +43,23 @@ class CommentsViewModelTest {
 
     @Before
     fun setup() {
-        val repo = mockk<CommentsRepository>()
+        repository = mockk<CommentsRepository>()
 
         coEvery {
-            repo.insertComment(any())
+            repository.insertComment(any())
         }.answers {
             addAndUpdate()
         }
 
         coEvery {
-            repo.deleteComment(any())
+            repository.deleteComment(any())
         }.answers {
             removeAndUpdate()
         }
 
-        every { repo.commentsLiveData() }.returns(commentsLiveData)
+        every { repository.commentsLiveData() }.returns(commentsLiveData)
 
-        viewModel = CommentsViewModel(repo)
+        viewModel = CommentsViewModel(repository)
         Dispatchers.setMain(mainThreadSurrogate)
     }
 
@@ -88,6 +89,16 @@ class CommentsViewModelTest {
         val actualCommentsSize = viewModel.commentsLiveData(videoId).getOrAwaitValue().size
         val expectedCommentsSize = comments.size
         assertThat(actualCommentsSize, `is`(expectedCommentsSize))
+
+        verifyInsertWasCall()
+    }
+
+    private fun verifyInsertWasCall() {
+        coVerify (exactly = 1) {
+            repository.insertComment(
+            Comment(videoId = mockComment.videoId, content = mockComment.content)
+            )
+        }
     }
 
     @Test
@@ -99,6 +110,14 @@ class CommentsViewModelTest {
         val actualCommentsSize = viewModel.commentsLiveData(videoId).getOrAwaitValue().size
         val expectedCommentsSize = comments.size
         assertThat(actualCommentsSize, `is`(expectedCommentsSize))
+
+        verifyDeleteCall()
+    }
+
+    private fun verifyDeleteCall() {
+        coVerify (exactly = 1) {
+            repository.deleteComment(mockComment)
+        }
     }
 
     @After
