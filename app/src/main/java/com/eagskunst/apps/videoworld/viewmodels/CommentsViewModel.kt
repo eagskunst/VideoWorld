@@ -1,5 +1,7 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.viewModelScope
 import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.db.entities.Comment
@@ -11,7 +13,11 @@ import kotlinx.coroutines.launch
  */
 class CommentsViewModel (private val commentsRepository: CommentsRepository): BaseViewModel() {
 
-    val commentsLiveData = commentsRepository.commentsLiveData()
+    val commentsLiveData: (videoId: String) -> LiveData<List<Comment>> = { videoId ->
+        Transformations.map(commentsRepository.commentsLiveData()) { comments ->
+            comments.filter{ it.videoId == videoId }
+        }
+    }
 
     fun insertNewComment(content: String, videoId: String) {
         viewModelScope.launch {

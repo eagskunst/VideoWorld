@@ -10,7 +10,7 @@ class CommentsLocalRepository (private val commentsDao: CommentsDao) {
 
     suspend fun insertComment(comment: Comment) = commentsDao.insertComment(comment)
 
-    suspend fun deleteComment(comment: Comment) = commentsDao.deleteCommnet(comment)
+    suspend fun deleteComment(comment: Comment) = commentsDao.deleteComment(comment)
 
     fun commentLiveData() = commentsDao.getCommentsOfVideoLiveData()
 

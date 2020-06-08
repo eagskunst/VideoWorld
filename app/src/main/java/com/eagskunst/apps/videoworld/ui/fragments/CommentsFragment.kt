@@ -28,12 +28,13 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         playerViewModel.playerStateLiveData.observe(viewLifecycleOwner, Observer { state ->
             if (state == null) {
                 return@Observer
             }
             //Removing observers that could trigger multiple calls
-            commentsViewModel.commentsLiveData.removeObservers(viewLifecycleOwner)
+            commentsViewModel.commentsLiveData(currentClipId).removeObservers(viewLifecycleOwner)
 
             currentClipId = state.clipsList[state.currentPosition].id
             observeCommentsForClip(currentClipId)
@@ -56,9 +57,9 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
      * @param videoId: The id of the video for filtering purposes.
      */
     private fun observeCommentsForClip(videoId: String) {
-        commentsViewModel.commentsLiveData.observe(viewLifecycleOwner, Observer { comments ->
+        commentsViewModel.commentsLiveData(videoId).observe(viewLifecycleOwner, Observer { comments ->
             Timber.d("Building comment list from live data")
-            buildCommentsList(comments.filter { it.videoId == videoId })
+            buildCommentsList(comments)
         })
     }
 

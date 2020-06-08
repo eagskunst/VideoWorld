@@ -17,7 +17,7 @@ interface CommentsDao {
     suspend fun insertComment(comment: Comment)
 
     @Delete
-    suspend fun deleteCommnet(comment: Comment)
+    suspend fun deleteComment(comment: Comment)
 
     @Query("SELECT * FROM Comment")
     fun getCommentsOfVideoLiveData(): LiveData<List<Comment>>
