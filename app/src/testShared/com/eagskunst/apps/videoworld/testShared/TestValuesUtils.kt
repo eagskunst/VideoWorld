@@ -22,14 +22,16 @@ object TestValuesUtils {
         val comments = mutableListOf<Comment>()
 
         for(n in range) {
-            val comment = comment {
-                videoId = UUID.randomUUID().toString()
-                content = getRandomString()
-            }
+            val comment = createComment()
             comments.add(comment)
         }
 
         return comments
+    }
+
+    fun createComment(vId: String? = null, cont: String? = null ) = comment {
+        videoId = vId ?: UUID.randomUUID().toString()
+        content = cont ?: getRandomString()
     }
 
 }
