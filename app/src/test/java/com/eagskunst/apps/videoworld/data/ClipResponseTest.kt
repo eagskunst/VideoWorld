@@ -136,7 +136,7 @@ class ClipResponseTest {
     fun assertClipFilenames() {
         val filenames = (0..5).map { UUID.randomUUID().toString() }
         val clips = (0..5)
-            .map{ mockk<ClipResponse>() }
+            .map { mockk<ClipResponse>() }
             .also { clips ->
                 clips.forEachIndexed { idx, clip ->
                     every { clip.id } returns filenames[idx]
@@ -150,6 +150,28 @@ class ClipResponseTest {
 
             assertThat(actual, `is`(expected))
         }
+    }
+
+    @Test
+    fun assertClipFinalUrl() {
+        val validClip = mockk<ClipResponse>()
+        val invalidClip = mockk<ClipResponse>()
+
+        every { validClip.thumbnailUrl } returns "https://clips-media-assets2.twitch.tv/AT-cm%7C386828697-preview-480x272.jpg"
+        every { invalidClip.thumbnailUrl } returns "https://nothing.com"
+        every { validClip.getClipUrl() } answers { callOriginal() }
+        every { invalidClip.getClipUrl() } answers { callOriginal() }
+        val regex = Regex(".*(?=-preview)")
+
+        assertThat(
+            validClip.getClipUrl(),
+            `is`(regex.find(validClip.thumbnailUrl)?.value + ".mp4")
+            )
+
+        assertThat(
+            invalidClip.getClipUrl(),
+            `is`("null.mp4")
+        )
     }
 
 }

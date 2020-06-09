@@ -1,11 +1,9 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
-import android.content.Context
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import java.io.File
-import javax.inject.Inject
 
 /**
  * Created by eagskunst in 3/5/2020.
@@ -41,18 +39,18 @@ class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
      * clip. [DownloadState.DOWNLOADING] if the downloadingVideosList contains the clip. Else [DownloadState.NOT_DOWNLOADED]
      */
     fun getDownloadStateForClip(clip: ClipResponse): Int {
-        return when {
-            downloadedVideosList.contains(clip) -> DownloadState.DOWNLOADED
-            downloadingVideosList.contains(clip) -> DownloadState.DOWNLOADING
+        return when (clip) {
+            in downloadedVideosList -> DownloadState.DOWNLOADED
+            in downloadingVideosList -> DownloadState.DOWNLOADING
             else -> DownloadState.NOT_DOWNLOADED
         }
     }
 
 
-    fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
+    fun addVideoToDownloadingList(clip: ClipResponse) = downloadingVideosList.add(clip)
 
 
-    fun removeVideoFromDownloadList(clip: ClipResponse) {
+    fun removeVideoFromDownloadingList(clip: ClipResponse) {
         downloadingVideosList.remove(clip)
     }
 

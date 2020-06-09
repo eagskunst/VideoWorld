@@ -116,7 +116,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
 
         val workId = workStateHandler.startDownloadWork(clip, url)
 
-        downloadViewModel.addVideoToDownloadList(clip)
+        downloadViewModel.addVideoToDownloadingList(clip)
 
         workStateHandler.observeWorkById(workId, requireActivity()) { work ->
             Timber.d("Work tag : ${work.tags}. Work state: ${work.state}")
@@ -124,11 +124,11 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
             Timber.d("Download state: $downloadState")
 
             if (downloadState == DownloadState.DOWNLOADED) {
-                downloadViewModel.removeVideoFromDownloadList(clip)
+                downloadViewModel.removeVideoFromDownloadingList(clip)
                 downloadViewModel.updateDownloadedVideosList(clip)
             }
             else if(work.state.isCancelled) {
-                downloadViewModel.removeVideoFromDownloadList(clip)
+                downloadViewModel.removeVideoFromDownloadingList(clip)
             }
 
             twitchViewModel.getUserClips(twitchViewModel.currentUserId())
@@ -142,7 +142,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
      */
     private fun cancelDownloadWork(clip: ClipResponse) {
         workStateHandler.cancelDownloadWork(clip)
-        downloadViewModel.removeVideoFromDownloadList(clip)
+        downloadViewModel.removeVideoFromDownloadingList(clip)
     }
 
     /**

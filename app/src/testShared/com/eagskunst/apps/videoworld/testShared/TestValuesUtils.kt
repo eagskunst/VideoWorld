@@ -1,7 +1,9 @@
 package com.eagskunst.apps.videoworld.testShared
 
 import androidx.annotation.VisibleForTesting
+import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.db.entities.Comment
+import com.eagskunst.apps.videoworld.testShared.builders.clipResponse
 import com.eagskunst.apps.videoworld.testShared.builders.comment
 import java.util.*
 
@@ -29,9 +31,24 @@ object TestValuesUtils {
         return comments
     }
 
+    fun createClipsResponses(size: Int = 5, thumbUrl: String? = null): List<ClipResponse> {
+        val clips = mutableListOf<ClipResponse>()
+        for (n in 0..size) {
+            val clip = createClipResponse(thumbUrl)
+            clips.add(clip)
+        }
+
+        return clips
+    }
+
     fun createComment(vId: String? = null, cont: String? = null ) = comment {
         videoId = vId ?: UUID.randomUUID().toString()
         content = cont ?: getRandomString()
+    }
+
+    fun createClipResponse(thumbUrl: String? = null, id: String? = null) = clipResponse {
+        thumbnailurl = thumbUrl ?: "https://clips-media-assets2.twitch.tv/AT-cm%7C386828697-preview-480x272.jpg"
+        this.id = id ?: UUID.randomUUID().toString()
     }
 
 }
