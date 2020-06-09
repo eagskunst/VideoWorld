@@ -37,7 +37,9 @@ data class ClipResponse(
     @Json(name = "view_count")
     val viewCount: Int
 ) {
-    val viewCountFormatted = "Views: ${viewCount.formatInt()}"
+
+    val viewCountFormatted: String
+        get() = "Views: ${viewCount.formatInt()}"
 
     fun dateFormatted(): String {
         val date = Constants.TWITCH_DATE_SDF.parse(createdAt)

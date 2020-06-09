@@ -9,8 +9,6 @@ import javax.inject.Inject
 
 /**
  * Created by eagskunst in 3/5/2020.
- * Context is only used for getting the filesDir is path. Do not worry about
- * leaks of the variable as is only used in the constructor scope
  */
 class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
 
