@@ -29,12 +29,11 @@ abstract class BaseRemoteRepository {
      * @param emitter is the interface that handles the error messages. The error messages must be displayed on the MainThread, or else they would throw an Exception.
      */
     suspend inline fun <T> safeApiCall(emitter: RemoteErrorEmitter, crossinline callFunction: suspend () -> T): T? {
-        return try{
-            val myObject = withContext(Dispatchers.IO){ callFunction.invoke() }
+        return try {
+            val myObject = withContext(Dispatchers.IO){ callFunction() }
             myObject
-        }catch (e: Exception){
+        } catch (e: Exception) {
             withContext(Dispatchers.Main){
-                e.printStackTrace()
                 Timber.e(e.cause,"Call error: ${e.localizedMessage}")
                 when(e){
                     is HttpException -> {
@@ -61,11 +60,11 @@ abstract class BaseRemoteRepository {
      * @param emitter is the interface that handles the error messages. The error messages must be displayed on the MainThread, or else they would throw an Exception.
      */
     inline fun <T> safeApiCallNoContext(emitter: RemoteErrorEmitter, callFunction: () -> T): T? {
-        return try{
+        return try {
             val myObject = callFunction.invoke()
             myObject
-        }catch (e: Exception){
-            e.printStackTrace()
+        } catch (e: Exception){
+            //e.printStackTrace()
             Timber.e(e.cause, "Call error: ${e.localizedMessage}")
             when(e){
                 is HttpException -> {
