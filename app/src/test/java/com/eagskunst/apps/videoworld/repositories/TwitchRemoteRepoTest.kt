@@ -1,6 +1,7 @@
 package com.eagskunst.apps.videoworld.repositories
 
 import com.eagskunst.apps.videoworld.TestCoroutineRule
+import com.eagskunst.apps.videoworld.app.di.SESSION_TOKEN
 import com.eagskunst.apps.videoworld.app.network.api.ClipsApi
 import com.eagskunst.apps.videoworld.app.network.api.TwitchAuthApi
 import com.eagskunst.apps.videoworld.app.network.api.UserApi
@@ -31,20 +32,28 @@ class TwitchRemoteRepoTest {
 
     @MockK
     lateinit var userApi: UserApi
+
     @MockK
     lateinit var clipsApi: ClipsApi
+
     @MockK
     lateinit var authApi: TwitchAuthApi
+
     @RelaxedMockK
     lateinit var validResponse: UserDataResponse
+
     @RelaxedMockK
     lateinit var validClipsResponse: UserClipsResponse
+
     @MockK
     lateinit var validAuthResponse: AuthTokenResponse
+
     @MockK
     lateinit var errorResponse: Response<*>
+
     @RelaxedMockK
     lateinit var remoteErrorEmitter: RemoteErrorEmitter
+
     @Rule
     @JvmField
     val coroutineRule = TestCoroutineRule()
@@ -75,7 +84,9 @@ class TwitchRemoteRepoTest {
         coEvery { clipsApi.getClipsByUserId(invalidUserId) } throws HttpException(errorResponse)
         coEvery { clipsApi.getClipsByUserId("") } throws HttpException(errorResponse)
 
-        coEvery { authApi.getAuthToken() } returns validAuthResponse andThenThrows HttpException(errorResponse)
+        coEvery { authApi.getAuthToken() } returns validAuthResponse andThenThrows HttpException(
+            errorResponse
+        )
     }
 
     @Test
@@ -98,6 +109,16 @@ class TwitchRemoteRepoTest {
             actual = twitchRemoteRepo.getUserByName("", remoteErrorEmitter)
 
             assertEquals(expected, actual)
+
+            coVerifySequence {
+                userApi.getUserByUsername(validUsername)
+                userApi.getUserByUsername(invalidUsername)
+                remoteErrorEmitter.onError("Something wrong happened")
+                userApi.getUserByUsername("")
+                remoteErrorEmitter.onError("Something wrong happened")
+            }
+
+            confirmVerified(userApi, remoteErrorEmitter)
         }
     }
 
@@ -107,6 +128,7 @@ class TwitchRemoteRepoTest {
             //CheckValid
             twitchRemoteRepo.getAuthToken(remoteErrorEmitter)
             coVerify { authApi.getAuthToken() }
+            assertEquals(validAuthResponse.accessToken, SESSION_TOKEN)
             twitchRemoteRepo.getAuthToken(remoteErrorEmitter)
             coVerify { authApi.getAuthToken() }
             confirmVerified(authApi)
@@ -132,7 +154,17 @@ class TwitchRemoteRepoTest {
             expected = null
             actual = twitchRemoteRepo.getUserClips("", remoteErrorEmitter)
 
+            coVerifySequence {
+                clipsApi.getClipsByUserId(validUserId)
+                clipsApi.getClipsByUserId(invalidUserId)
+                remoteErrorEmitter.onError("Something wrong happened")
+                clipsApi.getClipsByUserId("")
+                remoteErrorEmitter.onError("Something wrong happened")
+            }
+
             assertEquals(expected, actual)
+
+            confirmVerified(clipsApi, remoteErrorEmitter)
         }
     }
 
