@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.viewbinding.ViewBinding
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentClipBinding
@@ -38,6 +39,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 import org.koin.core.parameter.parametersOf
 
 const val CLIP_ID = "CLIP_ID"
+
 class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
 
     override val bindingFunction: (view: View) -> FragmentClipBinding
@@ -48,11 +50,13 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
     private val downloadViewModel: DownloadViewModel by sharedViewModel()
     private val dsFactory by inject<DataSource.Factory>()
     private val player: SimpleExoPlayer by inject { parametersOf(requireContext()) }
+
     //Playback speeds for ExoPlayer
     private val speeds = listOf(
         0.5f,
         1.0f,
-        1.5f)
+        1.5f
+    )
 
     //Global event listener to serve as a single source of truth for the auto-play events
     private var playerEventListener: Player.EventListener? = null
@@ -83,13 +87,13 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         })
 
         val adapter = InnerFragmentsAdapter(childFragmentManager, listOf(
-            SubClipsFragment(),
-            CommentsFragment()
+            { SubClipsFragment() },
+            { CommentsFragment() }
         ))
 
         binding.clipFragmentsPager.adapter = adapter
         TabLayoutMediator(binding.clipTabLayout, binding.clipFragmentsPager) { tab, position ->
-            tab.text = if(position == 0)
+            tab.text = if (position == 0)
                 "Clips"
             else
                 "Comments"
@@ -123,7 +127,8 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
      * @param playerView: The player that holds the custom controls layout.
      */
     private fun bindPlayerViews(playerView: PlayerView) {
-        val playBackSpeedBtn = playerView.findViewById<MaterialButton>(R.id.playbackSpeedBtn) ?: null
+        val playBackSpeedBtn =
+            playerView.findViewById<MaterialButton>(R.id.playbackSpeedBtn) ?: null
         playBackSpeedBtn?.setOnClickListener {
             val popupMenu = createPopupMenu(it)
             popupMenu.show()
@@ -132,16 +137,15 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         val fullScreenBtn = playerView.findViewById<MaterialButton>(R.id.fullScreenBtn) ?: null
 
         fullScreenBtn?.setOnClickListener {
-            requireActivity().requestedOrientation = if(requireActivity().isInPortrait()){
-                 ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            }
-            else
+            requireActivity().requestedOrientation = if (requireActivity().isInPortrait()) {
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            } else
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
         //Observes configuration changes for updating the UI
         orientationViewModel.configData.observe(viewLifecycleOwner, Observer { config ->
-            if(config != null){
+            if (config != null) {
                 updatePlayerView(fullScreenBtn, config.orientation)
                 updateWindowMode(config.orientation)
             }
@@ -152,7 +156,8 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         forwardBtn?.setOnClickListener { player.updatePosition(5000) }
         rewindBtn?.setOnClickListener { player.updatePosition(-5000) }
 
-        playerView.findViewById<ImageView?>(R.id.backBtn)?.setOnClickListener { findNavController().navigateUp() }
+        playerView.findViewById<ImageView?>(R.id.backBtn)
+            ?.setOnClickListener { findNavController().navigateUp() }
     }
 
     private fun createVideoSource(currentUrl: String): ProgressiveMediaSource {
@@ -167,13 +172,14 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
      */
     private fun updatePlayerView(fullScreenBtn: MaterialButton?, orientation: Int) {
         val params = binding.playerView.layoutParams as LinearLayout.LayoutParams
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             params.height = FrameLayout.LayoutParams.MATCH_PARENT
-            fullScreenBtn?.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fullscreen_exit_black)
-        }
-        else {
+            fullScreenBtn?.icon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_fullscreen_exit_black)
+        } else {
             params.height = 300.px
-            fullScreenBtn?.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_fullscreen_black)
+            fullScreenBtn?.icon =
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_fullscreen_black)
         }
         binding.playerView.layoutParams = params
     }
@@ -182,11 +188,12 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
      * Add full screen flag to the window  if the cellphone is in landscape. Otherwise, removes the flag
      * @param orientation: The current [ActivityInfo] screen orientation
      */
-    private fun updateWindowMode(orientation: Int){
-        if(orientation == ActivityInfo.SCREEN_ORIENTATION_USER)
+    private fun updateWindowMode(orientation: Int) {
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_USER)
             requireActivity().window.setFlags(
                 WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
         else
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
@@ -205,9 +212,12 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         }
     }
 
-    inner class InnerFragmentsAdapter(manager: FragmentManager, private val fragments: List<Fragment>): FragmentStateAdapter(manager, lifecycle){
+    inner class InnerFragmentsAdapter(
+        manager: FragmentManager,
+        private inline val fragments: List<() -> BaseFragment<out ViewBinding>>
+    ) : FragmentStateAdapter(manager, lifecycle) {
         override fun createFragment(position: Int): Fragment {
-            return fragments[position]
+            return fragments[position]()
         }
 
         override fun getItemCount(): Int {

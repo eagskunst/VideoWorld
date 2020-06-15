@@ -21,14 +21,17 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
     private val _userClips = MutableLiveData<UserClipsResponse?>()
     val userClips = _userClips as LiveData<UserClipsResponse?>
 
-    fun currentUserId() = userData.value?.dataList?.get(0)?.id ?: ""
-    fun clipsListExists() = userClips.value != null
-
     init {
         viewModelScope.launch {
             repository.authUser(this@TwitchViewModel)
         }
     }
+
+    fun currentUserId() = userData.value?.dataList?.get(0)?.id ?: ""
+
+
+    fun clipsListExists() = userClips.value != null
+
 
     fun getUserByInput(input: String){
         viewModelScope.launch {
