@@ -14,7 +14,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.eagskunst.apps.videoworld.CustomTestRunner"
     }
 
     buildTypes {
@@ -50,6 +50,10 @@ android {
         androidTest {
             main.java.srcDirs += "$projectDir/src/testShared"
         }
+    }
+
+    testOptions {
+        animationsDisabled = true
     }
 
 }
@@ -135,12 +139,19 @@ dependencies {
     //Test dependencies
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion"
     testImplementation "org.hamcrest:hamcrest-all:1.3"
+    testImplementation 'androidx.test:core:1.2.0'
+    testImplementation "org.koin:koin-test:$koinVersion"
     testImplementation "androidx.test:core-ktx:1.2.0"
     testImplementation 'junit:junit:4.12'
     testImplementation 'androidx.arch.core:core-testing:2.1.0'
     testImplementation "io.mockk:mockk:$mockkVersion"
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'org.robolectric:robolectric:4.3.1'
+    androidTestImplementation 'com.agoda.kakao:kakao:2.1.0'
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.2.0"
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     androidTestImplementation "io.mockk:mockk-android:$mockkVersion"
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    debugImplementation 'androidx.fragment:fragment-testing:1.2.5'
 }

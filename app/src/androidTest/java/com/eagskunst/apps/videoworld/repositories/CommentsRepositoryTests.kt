@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld
+package com.eagskunst.apps.videoworld.repositories
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule

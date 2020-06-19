@@ -26,6 +26,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/AppTheme"
+            android:name="androidx.fragment.app.FragmentActivity"/>
+        <activity
             android:name=".MainActivity"
             android:configChanges="screenSize|orientation|keyboardHidden"></activity>
     </application>
