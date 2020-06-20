@@ -6,8 +6,8 @@ import com.eagskunst.apps.videoworld.app.di.SESSION_TOKEN
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
-import com.eagskunst.apps.videoworld.testShared.TestValuesUtils
-import com.eagskunst.apps.videoworld.testShared.getOrAwaitValue
+import com.eagskunst.apps.videoworld.TestValuesUtils
+import com.eagskunst.apps.videoworld.getOrAwaitValue
 import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK

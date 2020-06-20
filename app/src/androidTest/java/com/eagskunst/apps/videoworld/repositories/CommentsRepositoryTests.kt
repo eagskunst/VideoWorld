@@ -9,8 +9,8 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.eagskunst.apps.videoworld.app.repositories.CommentsLocalRepository
 import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.db.VideoWorldDatabase
-import com.eagskunst.apps.videoworld.testShared.TestValuesUtils
-import com.eagskunst.apps.videoworld.testShared.getOrAwaitValue
+import com.eagskunst.apps.videoworld.TestValuesUtils
+import com.eagskunst.apps.videoworld.getOrAwaitValue
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After

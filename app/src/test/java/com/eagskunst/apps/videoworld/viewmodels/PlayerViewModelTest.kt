@@ -3,7 +3,7 @@ package com.eagskunst.apps.videoworld.viewmodels
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
-import com.eagskunst.apps.videoworld.testShared.getOrAwaitValue
+import com.eagskunst.apps.videoworld.getOrAwaitValue
 import com.google.android.exoplayer2.Player
 import io.mockk.MockKAnnotations
 import io.mockk.every

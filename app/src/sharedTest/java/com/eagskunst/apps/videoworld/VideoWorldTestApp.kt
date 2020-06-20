@@ -1,8 +1,7 @@
-package com.eagskunst.apps.videoworld.testShared
+package com.eagskunst.apps.videoworld
 
 import android.app.Application
 import androidx.annotation.VisibleForTesting
-import com.eagskunst.apps.videoworld.BuildConfig
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.loadKoinModules

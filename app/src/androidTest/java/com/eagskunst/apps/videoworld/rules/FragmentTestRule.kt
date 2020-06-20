@@ -1,16 +1,18 @@
 package com.eagskunst.apps.videoworld.rules
 
 import android.content.Intent
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
-import com.eagskunst.apps.videoworld.testShared.VideoWorldTestApp
+import com.eagskunst.apps.videoworld.VideoWorldTestApp
 import org.koin.core.module.Module
 
 /**
  * Created by eagskunst in 18/6/2020.
  */
+@VisibleForTesting(otherwise = VisibleForTesting.NONE)
 abstract class FragmentTestRule<F : Fragment> :
     ActivityTestRule<FragmentActivity>(FragmentActivity::class.java, true) {
 
@@ -46,6 +48,7 @@ abstract class FragmentTestRule<F : Fragment> :
 
 }
 
+@VisibleForTesting(otherwise = VisibleForTesting.NONE)
 fun <F : Fragment> createRule(fragment: F, vararg module: Module): FragmentTestRule<F> =
     object : FragmentTestRule<F>() {
         override fun createFragment(): F = fragment

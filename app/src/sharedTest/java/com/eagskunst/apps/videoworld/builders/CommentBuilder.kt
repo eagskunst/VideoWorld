@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.testShared.builders
+package com.eagskunst.apps.videoworld.builders
 
 import androidx.annotation.VisibleForTesting
 import com.eagskunst.apps.videoworld.db.entities.Comment
@@ -19,4 +19,5 @@ class CommentBuilder {
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-fun comment(block: CommentBuilder.() -> Unit) = CommentBuilder().apply(block).build()
+fun comment(block: CommentBuilder.() -> Unit) = CommentBuilder()
+    .apply(block).build()

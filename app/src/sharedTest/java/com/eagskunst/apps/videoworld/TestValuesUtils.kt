@@ -1,10 +1,10 @@
-package com.eagskunst.apps.videoworld.testShared
+package com.eagskunst.apps.videoworld
 
 import androidx.annotation.VisibleForTesting
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
+import com.eagskunst.apps.videoworld.builders.comment
+import com.eagskunst.apps.videoworld.builders.clipResponse
 import com.eagskunst.apps.videoworld.db.entities.Comment
-import com.eagskunst.apps.videoworld.testShared.builders.clipResponse
-import com.eagskunst.apps.videoworld.testShared.builders.comment
 import java.util.*
 
 /**
@@ -24,7 +24,8 @@ object TestValuesUtils {
         val comments = mutableListOf<Comment>()
 
         for(n in range) {
-            val comment = createComment()
+            val comment =
+                createComment()
             comments.add(comment)
         }
 
@@ -34,21 +35,27 @@ object TestValuesUtils {
     fun createClipsResponses(size: Int = 5, thumbUrl: String? = null): List<ClipResponse> {
         val clips = mutableListOf<ClipResponse>()
         for (n in 0..size) {
-            val clip = createClipResponse(thumbUrl)
+            val clip =
+                createClipResponse(
+                    thumbUrl
+                )
             clips.add(clip)
         }
 
         return clips
     }
 
-    fun createComment(vId: String? = null, cont: String? = null ) = comment {
-        videoId = vId ?: UUID.randomUUID().toString()
-        content = cont ?: getRandomString()
-    }
+    fun createComment(vId: String? = null, cont: String? = null ) =
+        comment {
+            videoId = vId ?: UUID.randomUUID().toString()
+            content = cont ?: getRandomString()
+        }
 
-    fun createClipResponse(thumbUrl: String? = null, id: String? = null) = clipResponse {
-        thumbnailurl = thumbUrl ?: "https://clips-media-assets2.twitch.tv/AT-cm%7C386828697-preview-480x272.jpg"
-        this.id = id ?: UUID.randomUUID().toString()
-    }
+    fun createClipResponse(thumbUrl: String? = null, id: String? = null) =
+        clipResponse {
+            thumbnailurl = thumbUrl
+                ?: "https://clips-media-assets2.twitch.tv/AT-cm%7C386828697-preview-480x272.jpg"
+            this.id = id ?: UUID.randomUUID().toString()
+        }
 
 }

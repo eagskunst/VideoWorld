@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.testShared
+package com.eagskunst.apps.videoworld
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData

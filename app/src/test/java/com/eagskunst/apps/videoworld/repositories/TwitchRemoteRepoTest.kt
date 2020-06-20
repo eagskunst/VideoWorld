@@ -1,6 +1,7 @@
 package com.eagskunst.apps.videoworld.repositories
 
 import com.eagskunst.apps.videoworld.TestCoroutineRule
+import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.app.di.SESSION_TOKEN
 import com.eagskunst.apps.videoworld.app.network.api.ClipsApi
 import com.eagskunst.apps.videoworld.app.network.api.TwitchAuthApi
@@ -9,7 +10,6 @@ import com.eagskunst.apps.videoworld.app.network.responses.auth.AuthTokenRespons
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRemoteRepository
-import com.eagskunst.apps.videoworld.testShared.TestValuesUtils
 import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
 import io.mockk.*
 import io.mockk.impl.annotations.InjectMockKs

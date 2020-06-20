@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.testShared.builders
+package com.eagskunst.apps.videoworld.builders
 
 import androidx.annotation.VisibleForTesting
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
@@ -41,4 +41,5 @@ class ClipResponseBuilder {
     )
 }
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-fun clipResponse(block: ClipResponseBuilder.() -> Unit) = ClipResponseBuilder().apply(block).build()
+fun clipResponse(block: ClipResponseBuilder.() -> Unit) = ClipResponseBuilder()
+    .apply(block).build()

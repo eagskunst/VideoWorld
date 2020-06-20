@@ -1,7 +1,7 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
-import com.eagskunst.apps.videoworld.testShared.TestValuesUtils
+import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

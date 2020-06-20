@@ -4,9 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.db.entities.Comment
-import com.eagskunst.apps.videoworld.testShared.TestValuesUtils
-import com.eagskunst.apps.videoworld.testShared.getOrAwaitValue
-import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
+import com.eagskunst.apps.videoworld.TestValuesUtils
+import com.eagskunst.apps.videoworld.builders.comment
+import com.eagskunst.apps.videoworld.getOrAwaitValue
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
@@ -30,7 +30,7 @@ class CommentsViewModelTest {
     lateinit var repository: CommentsRepository
     lateinit var viewModel: CommentsViewModel
     private val mockComment by lazy {
-        com.eagskunst.apps.videoworld.testShared.builders.comment {
+        comment {
             videoId = this@CommentsViewModelTest.videoId
             content = TestValuesUtils.getRandomString()
         }
