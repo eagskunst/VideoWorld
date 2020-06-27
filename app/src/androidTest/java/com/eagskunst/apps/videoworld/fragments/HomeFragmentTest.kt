@@ -1,6 +1,6 @@
 package com.eagskunst.apps.videoworld.fragments
 
-import androidx.lifecycle.LiveData
+import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.agoda.kakao.screen.Screen.Companion.onScreen
@@ -11,17 +11,15 @@ import com.eagskunst.apps.videoworld.screens.HomeScreen
 import com.eagskunst.apps.videoworld.ui.fragments.HomeFragment
 import com.eagskunst.apps.videoworld.utils.formatInt
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
-import io.mockk.Runs
+import com.squareup.picasso.Picasso
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import org.junit.Before
+import io.mockk.mockkStatic
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by eagskunst in 18/6/2020.
@@ -29,30 +27,34 @@ import org.koin.dsl.module
 @RunWith(AndroidJUnit4ClassRunner::class)
 class HomeFragmentTest {
 
-    private val twitchViewModel: TwitchViewModel = mockk()
-    private val userData = MutableLiveData<UserDataResponse>()
     private val fragment = HomeFragment()
 
     @get:Rule
     val fragmentRule = createRule(fragment, module {
         single(override = true) {
+            makeMocks()
+            val twitchViewModel = mockViewModel()
             twitchViewModel
         }
     })
 
-    @Before
-    fun setup() {
-        val userResponse: UserResponse = mockk()
-        every { userResponse.displayName } returns "Rubius"
-        every { userResponse.profileImageUrl } returns ""
-        every { userResponse.description } returns "Soy streamer"
-        every { userResponse.viewCount } returns 5000
-        every { twitchViewModel.getUserClips("Rubius") }.answers {
-            userData.value = UserDataResponse(listOf(userResponse))
+
+    @get:Rule
+    val countingTaskExecutorRule = CountingTaskExecutorRule()
+
+    private fun makeMocks() {
+        mockkStatic(Picasso::class)
+    }
+
+    private fun mockViewModel(): TwitchViewModel {
+        val userData = MutableLiveData<UserDataResponse>()
+        val twitchViewModel = mockk<TwitchViewModel>(relaxed = true)
+        every { twitchViewModel.userData } returns userData
+        every { twitchViewModel.getUserByInput("Rubius") }.answers {
+            updateUserDataLiveData(userData)
         }
-        every { twitchViewModel.userData } returns userData as LiveData<UserDataResponse>
-        every { twitchViewModel.userClips } returns MutableLiveData()
-        every { twitchViewModel.getUserClips(any()) } just Runs
+
+        return twitchViewModel
     }
 
     @Test
@@ -67,15 +69,24 @@ class HomeFragmentTest {
 
     @Test
     fun whenWritingAName_AndPressingTheImeAction_AssertTextChanges() {
-        onScreen<HomeScreen> {
+        val screen = onScreen<HomeScreen> {
             nameInput.typeText("Rubius")
             //nameInput.pressImeAction()
             searchBtn.click()
-            runBlocking { delay(2000) }
+            countingTaskExecutorRule.drainTasks(5, TimeUnit.SECONDS)
             streamerNameTv.hasText("Rubius")
             streamerDescp.hasText("Soy streamer")
-            streamerCount.hasText("Views: ${5000.formatInt()}}")
+            streamerCount.hasText("Views: ${5000.formatInt()}")
         }
+    }
+
+    private fun updateUserDataLiveData(userData: MutableLiveData<UserDataResponse>) {
+        val userResponse: UserResponse = mockk()
+        every { userResponse.displayName } returns "Rubius"
+        every { userResponse.profileImageUrl } returns "https://example.com/1.jpg"
+        every { userResponse.description } returns "Soy streamer"
+        every { userResponse.viewCount } returns 5000
+        userData.postValue(UserDataResponse(listOf(userResponse)))
     }
 
 }

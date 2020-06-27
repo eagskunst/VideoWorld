@@ -14,7 +14,7 @@ import org.koin.core.module.Module
  */
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
 abstract class FragmentTestRule<F : Fragment> :
-    ActivityTestRule<FragmentActivity>(FragmentActivity::class.java, true) {
+    ActivityTestRule<FragmentActivity>(FragmentActivity::class.java, true, true) {
 
     override fun afterActivityLaunched() {
         super.afterActivityLaunched()
