@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import com.eagskunst.apps.videoworld.VideoWorldTestApp
+import com.squareup.picasso.Picasso
+import io.mockk.mockkStatic
 import org.koin.core.module.Module
 
 /**
@@ -21,7 +23,7 @@ abstract class FragmentTestRule<F : Fragment> :
         activity.runOnUiThread {
             val fm = activity.supportFragmentManager
             val transaction = fm.beginTransaction()
-
+            createCommonMocks()
             transaction.replace(
                 android.R.id.content,
                 createFragment()
@@ -35,6 +37,10 @@ abstract class FragmentTestRule<F : Fragment> :
             .targetContext.applicationContext as VideoWorldTestApp
 
         app.injectModules(getModules())
+    }
+
+    private fun createCommonMocks() {
+        mockkStatic(Picasso::class)
     }
 
     protected abstract fun createFragment(): F

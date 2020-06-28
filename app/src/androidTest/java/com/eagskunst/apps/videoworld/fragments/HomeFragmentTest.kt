@@ -8,13 +8,12 @@ import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserResponse
 import com.eagskunst.apps.videoworld.rules.createRule
 import com.eagskunst.apps.videoworld.screens.HomeScreen
+import com.eagskunst.apps.videoworld.screens.isKeyboardClose
 import com.eagskunst.apps.videoworld.ui.fragments.HomeFragment
 import com.eagskunst.apps.videoworld.utils.formatInt
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
-import com.squareup.picasso.Picasso
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +31,6 @@ class HomeFragmentTest {
     @get:Rule
     val fragmentRule = createRule(fragment, module {
         single(override = true) {
-            makeMocks()
             val twitchViewModel = mockViewModel()
             twitchViewModel
         }
@@ -41,10 +39,6 @@ class HomeFragmentTest {
 
     @get:Rule
     val countingTaskExecutorRule = CountingTaskExecutorRule()
-
-    private fun makeMocks() {
-        mockkStatic(Picasso::class)
-    }
 
     private fun mockViewModel(): TwitchViewModel {
         val userData = MutableLiveData<UserDataResponse>()
@@ -69,10 +63,10 @@ class HomeFragmentTest {
 
     @Test
     fun whenWritingAName_AndPressingTheImeAction_AssertTextChanges() {
-        val screen = onScreen<HomeScreen> {
+        onScreen<HomeScreen> {
             nameInput.typeText("Rubius")
-            //nameInput.pressImeAction()
-            searchBtn.click()
+            nameInput.pressImeAction()
+            isKeyboardClose() //Check is keyboard was closed
             countingTaskExecutorRule.drainTasks(5, TimeUnit.SECONDS)
             streamerNameTv.hasText("Rubius")
             streamerDescp.hasText("Soy streamer")
