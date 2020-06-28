@@ -44,11 +44,11 @@ android {
 
     sourceSets {
         test {
-            main.java.srcDirs += "$projectDir/src/sharedTest"
+            java.srcDirs += "$projectDir/src/sharedTest"
         }
 
         androidTest {
-            main.java.srcDirs += "$projectDir/src/sharedTest"
+            java.srcDirs += "$projectDir/src/sharedTest"
         }
     }
 

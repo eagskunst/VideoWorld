@@ -29,7 +29,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
 
         binding.nameInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                twitchViewModel.getUserByInput(binding.nameInput.text.toString())
+                val input = binding.nameInput.text.toString()
+                getUserByInput(input)
                 hideKeyboard()
                 return@setOnEditorActionListener true
             }
@@ -37,7 +38,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         binding.searchBtn.setOnClickListener {
-            twitchViewModel.getUserByInput(binding.nameInput.text.toString() ?: "")
+            getUserByInput(binding.nameInput.text.toString())
             hideKeyboard()
         }
 
@@ -56,7 +57,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 binding.streamerDescpTv.text = streamer.description
                 binding.streamerViewCountTv.text = "Views: ${streamer.viewCount.formatInt()}"
             } else {
+
                 binding.streamerCard.setOnClickListener { }
+                binding.profileIv.visibility = View.INVISIBLE
+                binding.streamerLoginTv.text = ""
+                binding.streamerDescpTv.text = ""
+                binding.streamerViewCountTv.text = ""
             }
         })
 
@@ -72,5 +78,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 else
                     View.VISIBLE
         })
+    }
+
+    private fun getUserByInput(input: String) {
+        if (input.isNotEmpty()) {
+            twitchViewModel.getUserByInput(input)
+        }
     }
 }

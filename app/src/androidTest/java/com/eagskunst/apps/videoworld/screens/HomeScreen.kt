@@ -2,6 +2,7 @@ package com.eagskunst.apps.videoworld.screens
 
 import com.agoda.kakao.common.views.KView
 import com.agoda.kakao.edit.KEditText
+import com.agoda.kakao.image.KImageView
 import com.agoda.kakao.progress.KProgressBar
 import com.agoda.kakao.screen.Screen
 import com.agoda.kakao.text.KButton
@@ -16,6 +17,7 @@ class HomeScreen : Screen<HomeScreen>() {
     val streamerDescp = KTextView { withId(R.id.streamerDescpTv) }
     val streamerCount = KTextView { withId(R.id.streamerViewCountTv) }
     val streamerCardContainer = KView { withId(R.id.cardContent) }
+    val streamerImg = KImageView { withId(R.id.profileIv) }
     val progressBar = KProgressBar { withId(R.id.progressBar) }
     val nameInput = KEditText { withId(R.id.nameInput) }
     val searchBtn = KButton { withId(R.id.searchBtn) }
