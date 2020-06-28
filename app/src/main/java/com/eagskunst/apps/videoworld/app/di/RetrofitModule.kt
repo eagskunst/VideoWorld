@@ -26,12 +26,10 @@ val retrofitModule = module {
         res.getString(R.string.twitch_api_url)
     }
 
-
     factory(named(KoinQualifiers.TwitchAuth)) {
         val res = androidContext().resources
         res.getString(R.string.twitch_auth_url)
     }
-
 
     factory(named(KoinQualifiers.ClipsApi)) {
         val res = androidContext().resources

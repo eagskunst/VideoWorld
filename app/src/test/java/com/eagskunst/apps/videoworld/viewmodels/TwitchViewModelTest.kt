@@ -2,13 +2,18 @@ package com.eagskunst.apps.videoworld.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.eagskunst.apps.videoworld.TestCoroutineRule
+import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.app.di.SESSION_TOKEN
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
-import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.getOrAwaitValue
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.MockKMatcherScope
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +56,6 @@ class TwitchViewModelTest {
     val invalidUsername = TestValuesUtils.getRandomString()
     private val validUserId = "FakeId"
     private val invalidUserId = TestValuesUtils.getRandomString()
-
 
     @Before
     fun setup() {
@@ -104,12 +108,12 @@ class TwitchViewModelTest {
         checkUserClips_validUserId()
         checkIfClipsExists(true)
 
-        //Test for id == currentUserId and userClips != null
+        // Test for id == currentUserId and userClips != null
         viewModel.getUserByInput(validUsername)
         checkUserClips_validUserId()
         checkIfClipsExists(true)
 
-        //Reset test
+        // Reset test
         checkUserClips_invalidUserId("")
         checkIfClipsExists(false)
 
@@ -127,7 +131,6 @@ class TwitchViewModelTest {
         val actual: UserClipsResponse? = viewModel.userClips.getOrAwaitValue()
         assertThat(actual, `is`(expected))
     }
-
 
     private fun checkUserClips_invalidUserId(invalidId: String) {
         viewModel.getUserClips(invalidId)
@@ -147,7 +150,6 @@ class TwitchViewModelTest {
         confirmVerified(twitchRepository)
     }
 
-
     private fun checkUserData_validUserName() {
         viewModel.getUserByInput(validUsername)
         val expected: UserDataResponse? = validResponse
@@ -166,6 +168,4 @@ class TwitchViewModelTest {
         val actual = viewModel.currentUserId()
         assertThat(actual, `is`(expected))
     }
-
-
 }

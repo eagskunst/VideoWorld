@@ -2,14 +2,14 @@ package com.eagskunst.apps.videoworld.utils.base
 
 import com.eagskunst.apps.videoworld.utils.ErrorType
 import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
+import java.io.IOException
+import java.net.SocketTimeoutException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.HttpException
 import timber.log.Timber
-import java.io.IOException
-import java.net.SocketTimeoutException
 
 /**
  * Created by eagskunst in 1/12/2019.
@@ -30,14 +30,14 @@ abstract class BaseRemoteRepository {
      */
     suspend inline fun <T> safeApiCall(emitter: RemoteErrorEmitter, crossinline callFunction: suspend () -> T): T? {
         return try {
-            val myObject = withContext(Dispatchers.IO){ callFunction() }
+            val myObject = withContext(Dispatchers.IO) { callFunction() }
             myObject
         } catch (e: Exception) {
-            withContext(Dispatchers.Main){
-                Timber.e(e.cause,"Call error: ${e.localizedMessage}")
-                when(e){
+            withContext(Dispatchers.Main) {
+                Timber.e(e.cause, "Call error: ${e.localizedMessage}")
+                when (e) {
                     is HttpException -> {
-                        if(e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
+                        if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
                         else {
                             val body = e.response()?.errorBody()
                             emitter.onError(getErrorMessage(body))
@@ -63,12 +63,12 @@ abstract class BaseRemoteRepository {
         return try {
             val myObject = callFunction.invoke()
             myObject
-        } catch (e: Exception){
-            //e.printStackTrace()
+        } catch (e: Exception) {
+            // e.printStackTrace()
             Timber.e(e.cause, "Call error: ${e.localizedMessage}")
-            when(e){
+            when (e) {
                 is HttpException -> {
-                    if(e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
+                    if (e.code() == 401) emitter.onError(ErrorType.SESSION_EXPIRED)
                     else {
                         val body = e.response()?.errorBody()
                         emitter.onError(getErrorMessage(body))

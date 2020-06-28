@@ -11,5 +11,4 @@ interface UserApi {
 
     @GET("users")
     suspend fun getUserByUsername(@Query("login") username: String): UserDataResponse
-
 }

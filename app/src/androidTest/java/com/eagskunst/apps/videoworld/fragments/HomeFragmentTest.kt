@@ -14,11 +14,11 @@ import com.eagskunst.apps.videoworld.utils.formatInt
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import io.mockk.every
 import io.mockk.mockk
+import java.util.concurrent.TimeUnit
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.dsl.module
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by eagskunst in 18/6/2020.
@@ -35,7 +35,6 @@ class HomeFragmentTest {
             twitchViewModel
         }
     })
-
 
     @get:Rule
     val countingTaskExecutorRule = CountingTaskExecutorRule()
@@ -66,7 +65,7 @@ class HomeFragmentTest {
         onScreen<HomeScreen> {
             nameInput.typeText("Rubius")
             nameInput.pressImeAction()
-            isKeyboardClose() //Check is keyboard was closed
+            isKeyboardClose() // Check is keyboard was closed
             countingTaskExecutorRule.drainTasks(5, TimeUnit.SECONDS)
             streamerNameTv.hasText("Rubius")
             streamerDescp.hasText("Soy streamer")
@@ -82,5 +81,4 @@ class HomeFragmentTest {
         every { userResponse.viewCount } returns 5000
         userData.postValue(UserDataResponse(listOf(userResponse)))
     }
-
 }

@@ -14,7 +14,7 @@ import org.koin.android.viewmodel.ext.android.sharedViewModel
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class AddCommentBottomSheetFragment: BottomSheetDialogFragment() {
+class AddCommentBottomSheetFragment : BottomSheetDialogFragment() {
 
     private val commentViewModel: CommentsViewModel by sharedViewModel()
 
@@ -22,8 +22,11 @@ class AddCommentBottomSheetFragment: BottomSheetDialogFragment() {
     private val binding: FragmentAddCommentBinding
         get() = _binding ?: throw IllegalAccessException("Should only be accessed after onCreateView and before onDestroyView")
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         if (_binding == null) {
             _binding = FragmentAddCommentBinding.inflate(inflater)
         }

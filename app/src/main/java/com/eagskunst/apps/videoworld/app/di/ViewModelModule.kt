@@ -1,8 +1,10 @@
 package com.eagskunst.apps.videoworld.app.di
 
-import com.eagskunst.apps.videoworld.app.repositories.CommentsLocalRepository
-import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
-import com.eagskunst.apps.videoworld.viewmodels.*
+import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
+import com.eagskunst.apps.videoworld.viewmodels.DownloadViewModel
+import com.eagskunst.apps.videoworld.viewmodels.OrientationViewModel
+import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
+import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module

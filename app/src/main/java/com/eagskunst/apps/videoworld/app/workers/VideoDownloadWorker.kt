@@ -6,21 +6,24 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.work.*
+import androidx.work.CoroutineWorker
+import androidx.work.Data
+import androidx.work.ForegroundInfo
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.network.api.TwitchDownloadApi
+import com.eagskunst.apps.videoworld.utils.DownloadState
+import java.io.File
+import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import com.eagskunst.apps.videoworld.utils.DownloadState
-import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.http.Streaming
 import timber.log.Timber
-import java.io.File
-
-import java.io.FileOutputStream
 
 /**
  * Created by eagskunst in 30/4/2020.
@@ -31,7 +34,8 @@ import java.io.FileOutputStream
  */
 class VideoDownloadWorker(
     private val context: Context,
-    params: WorkerParameters): CoroutineWorker(context, params), KoinComponent {
+    params: WorkerParameters
+) : CoroutineWorker(context, params), KoinComponent {
 
     companion object {
         const val WORK_NAME = "DownloadWork"
@@ -75,11 +79,13 @@ class VideoDownloadWorker(
      * @param indeterminateProgress: Determines if the notification's progress bar is indeterminate. False by default
      * @param clipTitle: The notification's title
      */
-    private fun createForegroundInfo(progress: String = "Downloading file",
-                                     currentProgress: Int,
-                                     onGoing: Boolean = true,
-                                     indeterminateProgress: Boolean = false,
-                                     clipTitle: String): ForegroundInfo {
+    private fun createForegroundInfo(
+        progress: String = "Downloading file",
+        currentProgress: Int,
+        onGoing: Boolean = true,
+        indeterminateProgress: Boolean = false,
+        clipTitle: String
+    ): ForegroundInfo {
 
         // Create a Notification channel if necessary
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -115,7 +121,7 @@ class VideoDownloadWorker(
      * @return [Result] always returns [Result.success] and the [Data] inside it holds the truth of the download.
      */
     private suspend fun download(url: String, outputFile: String, clipTitle: String): Result {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             var responseBody: ResponseBody? = null
             var file: File? = null
             var fos: FileOutputStream? = null
@@ -133,12 +139,12 @@ class VideoDownloadWorker(
                 fos.use { output ->
                     val buffer = ByteArray(4 * 1024)
                     var read: Int
-                    while ( input!!.read(buffer).also { read = it } != -1 ) {
+                    while (input!!.read(buffer).also { read = it } != -1) {
 
                         bytesRed += read
                         output.write(buffer, 0, read)
 
-                        //Update notification
+                        // Update notification
                         val currentProgress = currentProgress(length.toDouble(), bytesRed.toDouble())
                         setForeground(
                             createForegroundInfo(currentProgress = currentProgress, clipTitle = clipTitle)
@@ -168,7 +174,7 @@ class VideoDownloadWorker(
      */
     private fun createOutputData(success: Boolean): Data {
         return Data.Builder()
-            .putInt(DOWNLOAD_STATE, if(success) DownloadState.DOWNLOADED else DownloadState.NOT_DOWNLOADED)
+            .putInt(DOWNLOAD_STATE, if (success) DownloadState.DOWNLOADED else DownloadState.NOT_DOWNLOADED)
             .build()
     }
 
@@ -178,8 +184,8 @@ class VideoDownloadWorker(
      * @param bytesRed downloaded bytes.
      */
     private fun currentProgress(length: Double, bytesRed: Double): Int {
-        val progressDouble = (bytesRed/length)*100.0
-        return if(progressDouble.toInt() < 1) 1 else progressDouble.toInt()
+        val progressDouble = (bytesRed / length) * 100.0
+        return if (progressDouble.toInt() < 1) 1 else progressDouble.toInt()
     }
 
     /**
@@ -196,5 +202,4 @@ class VideoDownloadWorker(
         // or other notification behaviors after this
         notificationManager.createNotificationChannel(mChannel)
     }
-
 }

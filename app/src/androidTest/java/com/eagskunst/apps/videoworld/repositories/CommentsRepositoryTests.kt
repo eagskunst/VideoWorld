@@ -6,11 +6,12 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.matcher.ViewMatchers.assertThat
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.app.repositories.CommentsLocalRepository
 import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.db.VideoWorldDatabase
-import com.eagskunst.apps.videoworld.TestValuesUtils
 import com.eagskunst.apps.videoworld.getOrAwaitValue
+import java.io.IOException
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.After
@@ -18,7 +19,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.IOException
 
 /**
  * Created by eagskunst in 7/6/2020.
@@ -35,7 +35,7 @@ class CommentsRepositoryTests {
     private val comments = TestValuesUtils.createComments()
 
     @Before
-    fun createDb(){
+    fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(
             context, VideoWorldDatabase::class.java
@@ -65,11 +65,9 @@ class CommentsRepositoryTests {
         }
     }
 
-
     @After
     @Throws(IOException::class)
-    fun close(){
+    fun close() {
         db.close()
     }
-
 }

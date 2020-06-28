@@ -33,7 +33,7 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
             if (state == null) {
                 return@Observer
             }
-            //Removing observers that could trigger multiple calls
+            // Removing observers that could trigger multiple calls
             commentsViewModel.commentsLiveData(currentClipId).removeObservers(viewLifecycleOwner)
 
             currentClipId = state.clipsList[state.currentPosition].id
@@ -69,8 +69,7 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
                 emptiness {
                     id("emptiness")
                 }
-            }
-            else {
+            } else {
                 comments.forEach { comment ->
                     comment {
                         id(comment.id)
@@ -83,5 +82,4 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>(R.layout.fragment
             }
         }
     }
-
 }

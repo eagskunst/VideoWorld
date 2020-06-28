@@ -11,9 +11,9 @@ import retrofit2.http.Query
 interface TwitchAuthApi {
 
     @POST("oauth2/token")
-    suspend fun getAuthToken(@Query("client_id") clientId: String = ApiKeys.TWITCH_CLIENT_ID,
-                     @Query("grant_type") granType: String = "client_credentials",
-                     @Query("client_secret") clientSecret: String = ApiKeys.CLIENT_SECRET
-    ) : AuthTokenResponse
-
+    suspend fun getAuthToken(
+        @Query("client_id") clientId: String = ApiKeys.TWITCH_CLIENT_ID,
+        @Query("grant_type") granType: String = "client_credentials",
+        @Query("client_secret") clientSecret: String = ApiKeys.CLIENT_SECRET
+    ): AuthTokenResponse
 }

@@ -9,7 +9,7 @@ import com.agoda.kakao.screen.Screen
  * Created by eagskunst in 27/6/2020.
  */
 
-fun <T: Screen<T>> Screen<T>.isKeyboardClose() {
+fun <T : Screen<T>> Screen<T>.isKeyboardClose() {
     val inputMethodManager = InstrumentationRegistry.getInstrumentation().targetContext.getSystemService(
         Context.INPUT_METHOD_SERVICE) as InputMethodManager
 

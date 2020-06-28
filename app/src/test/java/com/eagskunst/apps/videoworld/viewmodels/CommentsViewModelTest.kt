@@ -2,12 +2,15 @@ package com.eagskunst.apps.videoworld.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
-import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.TestValuesUtils
+import com.eagskunst.apps.videoworld.app.repositories.CommentsRepository
 import com.eagskunst.apps.videoworld.builders.comment
+import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.getOrAwaitValue
-import io.mockk.*
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
@@ -35,7 +38,7 @@ class CommentsViewModelTest {
             content = TestValuesUtils.getRandomString()
         }
     }
-    private val videoId = "MockVideoId" //For live data observation
+    private val videoId = "MockVideoId" // For live data observation
     private val comments = mutableListOf<Comment>()
     private val commentsLiveData = MutableLiveData<List<Comment>>(comments)
 
@@ -94,7 +97,7 @@ class CommentsViewModelTest {
     }
 
     private fun verifyInsertWasCall() {
-        coVerify (exactly = 1) {
+        coVerify(exactly = 1) {
             repository.insertComment(
             Comment(videoId = mockComment.videoId, content = mockComment.content)
             )
@@ -115,7 +118,7 @@ class CommentsViewModelTest {
     }
 
     private fun verifyDeleteCall() {
-        coVerify (exactly = 1) {
+        coVerify(exactly = 1) {
             repository.deleteComment(mockComment)
         }
     }
@@ -125,5 +128,4 @@ class CommentsViewModelTest {
         Dispatchers.resetMain()
         mainThreadSurrogate.close()
     }
-
 }

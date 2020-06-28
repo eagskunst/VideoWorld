@@ -12,5 +12,4 @@ interface ClipsApi {
 
     @GET("clips")
     suspend fun getClipsByUserId(@Query("broadcaster_id") twitchUserId: String): UserClipsResponse
-
 }

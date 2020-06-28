@@ -11,7 +11,12 @@ import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsRespon
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRemoteRepository
 import com.eagskunst.apps.videoworld.utils.RemoteErrorEmitter
-import io.mockk.*
+import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.coVerifySequence
+import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -66,7 +71,6 @@ class TwitchRemoteRepoTest {
     @InjectMockKs
     lateinit var twitchRemoteRepo: TwitchRemoteRepository
 
-
     @Before
     fun setup() {
         MockKAnnotations.init(this)
@@ -92,19 +96,19 @@ class TwitchRemoteRepoTest {
     @Test
     fun testResponses_UserApiCalls() {
         runBlocking {
-            //CheckValid
+            // CheckValid
             var expected: UserDataResponse? = validResponse
             var actual = twitchRemoteRepo.getUserByName(validUsername, remoteErrorEmitter)
 
             assertEquals(expected, actual)
 
-            //Check invalid
+            // Check invalid
             expected = null
             actual = twitchRemoteRepo.getUserByName(invalidUsername, remoteErrorEmitter)
 
             assertEquals(expected, actual)
 
-            //Check empty
+            // Check empty
             expected = null
             actual = twitchRemoteRepo.getUserByName("", remoteErrorEmitter)
 
@@ -125,7 +129,7 @@ class TwitchRemoteRepoTest {
     @Test
     fun testResponses_ClipsApiCalls() {
         runBlocking {
-            //CheckValid
+            // CheckValid
             twitchRemoteRepo.getAuthToken(remoteErrorEmitter)
             coVerify { authApi.getAuthToken() }
             assertEquals(validAuthResponse.accessToken, SESSION_TOKEN)
@@ -138,19 +142,19 @@ class TwitchRemoteRepoTest {
     @Test
     fun testResponses_AuthApi() {
         runBlocking {
-            //CheckValid
+            // CheckValid
             var expected: UserClipsResponse? = validClipsResponse
             var actual = twitchRemoteRepo.getUserClips(validUserId, remoteErrorEmitter)
 
             assertEquals(expected, actual)
 
-            //Check invalid
+            // Check invalid
             expected = null
             actual = twitchRemoteRepo.getUserClips(invalidUserId, remoteErrorEmitter)
 
             assertEquals(expected, actual)
 
-            //Check empty
+            // Check empty
             expected = null
             actual = twitchRemoteRepo.getUserClips("", remoteErrorEmitter)
 
@@ -167,5 +171,4 @@ class TwitchRemoteRepoTest {
             confirmVerified(clipsApi, remoteErrorEmitter)
         }
     }
-
 }

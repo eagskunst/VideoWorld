@@ -1,15 +1,15 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
-import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.TestValuesUtils
+import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.utils.DownloadState
+import java.io.File
+import java.nio.file.Paths
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import java.io.File
-import java.nio.file.Paths
 
 /**
  * Created by eagskunst in 9/6/2020.
@@ -17,7 +17,7 @@ import java.nio.file.Paths
 
 class DownloadViewModelTest {
 
-    private val dumbPath = "dumbPath" //Represent context.filesDir.path
+    private val dumbPath = "dumbPath" // Represent context.filesDir.path
     private val dumbUrl = "twitch.com/clip"
     lateinit var viewModel: DownloadViewModel
     private val clips = TestValuesUtils.createClipsResponses(6, thumbUrl = dumbUrl)
@@ -143,5 +143,4 @@ class DownloadViewModelTest {
         val dumbDir = File(dumbPath)
         dumbDir.deleteRecursively()
     }
-
 }

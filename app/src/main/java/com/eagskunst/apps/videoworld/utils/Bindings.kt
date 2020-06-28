@@ -8,6 +8,6 @@ import androidx.databinding.BindingAdapter
  */
 
 @BindingAdapter("app:backgroundColor")
-fun setViewBackgroundColor(view: View, color: Int){
+fun setViewBackgroundColor(view: View, color: Int) {
     view.setBackgroundColor(color)
 }

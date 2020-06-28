@@ -53,9 +53,9 @@ class MainActivity : AppCompatActivity() {
 
         player.prepare(videoSource)
 
-        with(binding){
+        with(binding) {
             changeClipBtn.setOnClickListener {
-                currentUrl = if(currentUrl == urls[0])
+                currentUrl = if (currentUrl == urls[0])
                     urls[1]
                 else
                     urls[0]
@@ -81,10 +81,9 @@ class MainActivity : AppCompatActivity() {
 
             bindPlayerViews(playerView)
         }
-
     }
 
-    //TODO: Should be in a ViewModel for testing
+    // TODO: Should be in a ViewModel for testing
     private fun getUrlFromCurrentClip(currentUrl: String): String? {
         return Regex("[^/]+\$").find(currentUrl)?.value
     }
@@ -108,12 +107,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeOrientation(fullScreenBtn: MaterialButton) {
-        val orientation = if (isPortrait){
+        val orientation = if (isPortrait) {
             fullScreenBtn.icon = ContextCompat.getDrawable(this, R.drawable.ic_fullscreen_exit_black)
             isPortrait = false
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
-        else {
+        } else {
             fullScreenBtn.icon = ContextCompat.getDrawable(this, R.drawable.ic_fullscreen_black)
             isPortrait = true
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

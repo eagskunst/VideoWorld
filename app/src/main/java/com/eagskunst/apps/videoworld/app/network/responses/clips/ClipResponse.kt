@@ -1,6 +1,5 @@
 package com.eagskunst.apps.videoworld.app.network.responses.clips
 
-
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.utils.Constants
 import com.eagskunst.apps.videoworld.utils.formatInt

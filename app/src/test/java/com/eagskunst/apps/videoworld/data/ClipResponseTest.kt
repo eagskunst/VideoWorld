@@ -5,16 +5,16 @@ import com.eagskunst.apps.videoworld.utils.Constants
 import com.eagskunst.apps.videoworld.utils.formatInt
 import io.mockk.every
 import io.mockk.mockk
+import java.text.ParseException
+import java.util.Date
+import java.util.UUID
+import kotlin.math.pow
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import java.text.ParseException
-import java.util.*
-import kotlin.math.pow
-
 
 /**
  * Created by eagskunst in 8/6/2020.
@@ -27,7 +27,6 @@ class ClipResponseTest {
     @Rule
     @JvmField
     val exception: ExpectedException = ExpectedException.none()
-
 
     @Before
     fun setup() {
@@ -44,14 +43,13 @@ class ClipResponseTest {
             viewCount = numbers.next()
         }
 
-        while (viewCount in (1000..100000)){
+        while (viewCount in (1000..100000)) {
             assertFormat_containsLetter_AndAtLeastFirstDigit('K', viewCount)
             viewCount = numbers.next()
         }
 
         assertFormat_containsLetter_AndAtLeastFirstDigit('M', viewCount)
     }
-
 
     private fun mockViewCount(): List<Int> {
         val numbers = (0..6).map { n -> 10.0.pow(n.toDouble()).toInt() }
@@ -60,7 +58,6 @@ class ClipResponseTest {
         return numbers
     }
 
-
     private fun assertNumberRemainsTheSameInFormat(viewCount: Int) {
         val expected = "Views: $viewCount"
         val actual = clipResponse.viewCountFormatted
@@ -68,14 +65,12 @@ class ClipResponseTest {
         assertThat(actual, `is`(expected))
     }
 
-
     private fun assertFormat_containsLetter_AndAtLeastFirstDigit(letter: Char, viewCount: Int) {
         val firstDigit = viewCount.toString()[0]
         val format = clipResponse.viewCountFormatted
 
         assert(format.contains(firstDigit) and format.contains(letter))
     }
-
 
     @Test
     fun assertDateParsing() {
@@ -88,7 +83,6 @@ class ClipResponseTest {
 
         givenInvalidDate_assertExceptionIsThrown(mocks.last())
     }
-
 
     private fun mockDates(): List<List<Any>> {
         val dates = listOf(
@@ -108,7 +102,6 @@ class ClipResponseTest {
         return listOf(mocks, dates)
     }
 
-
     private fun givenSomeDates_assertValidFormatting(dates: List<String>, mocks: List<ClipResponse>) {
         dates.forEachIndexed { idx, sDate ->
 
@@ -125,7 +118,6 @@ class ClipResponseTest {
             )
         }
     }
-
 
     private fun givenInvalidDate_assertExceptionIsThrown(clip: ClipResponse) {
         exception.expect(ParseException::class.java)
@@ -173,5 +165,4 @@ class ClipResponseTest {
             `is`("null.mp4")
         )
     }
-
 }

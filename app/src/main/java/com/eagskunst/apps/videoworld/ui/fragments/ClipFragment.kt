@@ -51,14 +51,14 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
     private val dsFactory by inject<DataSource.Factory>()
     private val player: SimpleExoPlayer by inject { parametersOf(requireContext()) }
 
-    //Playback speeds for ExoPlayer
+    // Playback speeds for ExoPlayer
     private val speeds = listOf(
         0.5f,
         1.0f,
         1.5f
     )
 
-    //Global event listener to serve as a single source of truth for the auto-play events
+    // Global event listener to serve as a single source of truth for the auto-play events
     private var playerEventListener: Player.EventListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +70,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
                 return@Observer
             }
 
-            //Removing player listener on new player state.
+            // Removing player listener on new player state.
             playerEventListener?.let {
                 player.removeListener(it)
             }
@@ -143,7 +143,7 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
                 ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
 
-        //Observes configuration changes for updating the UI
+        // Observes configuration changes for updating the UI
         orientationViewModel.configData.observe(viewLifecycleOwner, Observer { config ->
             if (config != null) {
                 updatePlayerView(fullScreenBtn, config.orientation)
@@ -197,7 +197,6 @@ class ClipFragment : BaseFragment<FragmentClipBinding>(R.layout.fragment_clip) {
         else
             requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
     }
-
 
     /**
      * Creates a [PopupMenu] for the playbacks selection.

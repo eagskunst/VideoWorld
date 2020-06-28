@@ -15,7 +15,7 @@ abstract class BaseViewModel : ViewModel(), RemoteErrorEmitter {
 
     protected val _progressVisibility = MutableLiveData(View.GONE)
     protected val _screenState = MutableLiveData<ScreenState>()
-    protected val _errorType =  MutableLiveData<ErrorType>()
+    protected val _errorType = MutableLiveData<ErrorType>()
     protected val _errorMessage = MutableLiveData<String>()
 
     val progressVisibility = _progressVisibility as LiveData<Int>
@@ -30,5 +30,4 @@ abstract class BaseViewModel : ViewModel(), RemoteErrorEmitter {
     override fun onError(msg: String) {
         _errorMessage.postValue(msg)
     }
-
 }

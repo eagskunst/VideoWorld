@@ -50,8 +50,6 @@ abstract class FragmentTestRule<F : Fragment> :
     fun launch() {
         launchActivity(Intent())
     }
-
-
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)

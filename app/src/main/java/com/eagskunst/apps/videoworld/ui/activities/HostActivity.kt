@@ -17,7 +17,7 @@ class HostActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host)
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             setupNavController()
         }
     }
@@ -33,7 +33,7 @@ class HostActivity : AppCompatActivity() {
     }
 
     private fun setupNavController() {
-        val navHostFragment =  supportFragmentManager.findFragmentById(R.id.nav_host_container) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_container) as NavHostFragment
         navController = navHostFragment.navController
         navController.setGraph(R.navigation.main_nav)
     }

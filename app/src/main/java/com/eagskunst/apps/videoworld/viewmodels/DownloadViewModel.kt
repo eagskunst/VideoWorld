@@ -8,7 +8,7 @@ import java.io.File
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
+class DownloadViewModel(private val filesDirPath: String) : BaseViewModel() {
 
     private var downloadedVideosList = listOf<ClipResponse>()
     private val downloadingVideosList = mutableListOf<ClipResponse>()
@@ -46,9 +46,7 @@ class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
         }
     }
 
-
     fun addVideoToDownloadingList(clip: ClipResponse) = downloadingVideosList.add(clip)
-
 
     fun removeVideoFromDownloadingList(clip: ClipResponse) {
         downloadingVideosList.remove(clip)
@@ -81,17 +79,16 @@ class DownloadViewModel (private val filesDirPath: String): BaseViewModel() {
      * @param clip: The clip of the file
      * @return [File]
      */
-    fun getClipFile(clip: ClipResponse) = File("${filesDirPath}/${clip.getClipFilename()}")
+    fun getClipFile(clip: ClipResponse) = File("$filesDirPath/${clip.getClipFilename()}")
 
     /**
      * @param clip: The clip to be shown.
      * @return The File path of the video or the URL to the video file.
      */
     fun getClipUrl(clip: ClipResponse): String {
-        return if( downloadedVideosList.contains(clip) )
+        return if (downloadedVideosList.contains(clip))
             getClipFile(clip).path
         else
             clip.getClipUrl()
     }
-
 }

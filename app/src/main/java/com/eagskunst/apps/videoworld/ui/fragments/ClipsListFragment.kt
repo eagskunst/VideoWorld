@@ -40,7 +40,7 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
         binding.clipsToolbar.setNavigationOnClickListener { findNavController().navigateUp() }
 
         twitchViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
-            if(data != null && data.dataList.isNotEmpty()){
+            if (data != null && data.dataList.isNotEmpty()) {
                 val streamerName = data.dataList[0].displayName
                 binding.clipsToolbar.title = "$streamerName clips"
             }
@@ -53,13 +53,13 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
             buildRecyclerView(binding, res)
         })
 
-        if(!twitchViewModel.clipsListExists())
+        if (!twitchViewModel.clipsListExists())
             twitchViewModel.getUserClips(twitchViewModel.currentUserId())
     }
 
     private fun buildRecyclerView(binding: FragmentClipsBinding, res: UserClipsResponse?) {
         binding.clipsRv.withModels {
-            if(res == null)
+            if (res == null)
                 progressBar { id("progress") }
             else {
                 res.clipResponseList.forEach { clip ->
@@ -126,14 +126,12 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
             if (downloadState == DownloadState.DOWNLOADED) {
                 downloadViewModel.removeVideoFromDownloadingList(clip)
                 downloadViewModel.updateDownloadedVideosList(clip)
-            }
-            else if(work.state.isCancelled) {
+            } else if (work.state.isCancelled) {
                 downloadViewModel.removeVideoFromDownloadingList(clip)
             }
 
             twitchViewModel.getUserClips(twitchViewModel.currentUserId())
         }
-
     }
 
     /**

@@ -15,7 +15,6 @@ class CommentBuilder {
         videoId = videoId,
         content = content
     )
-
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)

@@ -7,8 +7,10 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.databinding.FragmentHomeBinding
-import com.eagskunst.apps.videoworld.utils.*
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
+import com.eagskunst.apps.videoworld.utils.formatInt
+import com.eagskunst.apps.videoworld.utils.hideKeyboard
+import com.eagskunst.apps.videoworld.utils.showSnackbar
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import com.squareup.picasso.Picasso
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -18,7 +20,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
     override val bindingFunction: (view: View) -> FragmentHomeBinding
         get() = FragmentHomeBinding::bind
 
-
     private val twitchViewModel: TwitchViewModel by sharedViewModel()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,7 +28,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         twitchViewModel.getUserClips("")
 
         binding.nameInput.setOnEditorActionListener { _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 twitchViewModel.getUserByInput(binding.nameInput.text.toString())
                 hideKeyboard()
                 return@setOnEditorActionListener true
@@ -41,7 +42,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         }
 
         twitchViewModel.userData.observe(viewLifecycleOwner, Observer { data ->
-            if (data != null && data.dataList.isNotEmpty()){
+            if (data != null && data.dataList.isNotEmpty()) {
 
                 binding.streamerCard.setOnClickListener {
                     findNavController().navigate(R.id.action_homeFragment_to_clipsFragment)
@@ -54,9 +55,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
                 binding.streamerLoginTv.text = streamer.displayName
                 binding.streamerDescpTv.text = streamer.description
                 binding.streamerViewCountTv.text = "Views: ${streamer.viewCount.formatInt()}"
-            }
-            else {
-                binding.streamerCard.setOnClickListener {  }
+            } else {
+                binding.streamerCard.setOnClickListener { }
             }
         })
 
@@ -67,11 +67,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(R.layout.fragment_home) {
         twitchViewModel.progressVisibility.observe(viewLifecycleOwner, Observer { visibility ->
             binding.progressBar.visibility = visibility
             binding.cardContent.visibility =
-                if(visibility == View.VISIBLE)
+                if (visibility == View.VISIBLE)
                     View.GONE
                 else
                     View.VISIBLE
         })
-
     }
 }

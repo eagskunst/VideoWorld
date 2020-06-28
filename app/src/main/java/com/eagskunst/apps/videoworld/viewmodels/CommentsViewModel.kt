@@ -11,11 +11,11 @@ import kotlinx.coroutines.launch
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class CommentsViewModel (private val commentsRepository: CommentsRepository): BaseViewModel() {
+class CommentsViewModel(private val commentsRepository: CommentsRepository) : BaseViewModel() {
 
     val commentsLiveData: (videoId: String) -> LiveData<List<Comment>> = { videoId ->
         Transformations.map(commentsRepository.commentsLiveData()) { comments ->
-            comments.filter{ it.videoId == videoId }
+            comments.filter { it.videoId == videoId }
         }
     }
 
@@ -33,5 +33,4 @@ class CommentsViewModel (private val commentsRepository: CommentsRepository): Ba
             commentsRepository.deleteComment(comment)
         }
     }
-
 }

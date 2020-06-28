@@ -7,7 +7,7 @@ import androidx.test.runner.AndroidJUnitRunner
 /**
  * Created by eagskunst in 18/6/2020.
  */
-class CustomTestRunner: AndroidJUnitRunner() {
+class CustomTestRunner : AndroidJUnitRunner() {
 
     override fun newApplication(
         cl: ClassLoader?,

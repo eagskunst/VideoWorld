@@ -12,5 +12,4 @@ class UserPreferences @Inject constructor(context: Context) {
     private val prefManager = PreferenceManager.getDefaultSharedPreferences(context)
 
     fun isVideoSaved(videoFileName: String) = prefManager.getBoolean(videoFileName, false)
-
 }

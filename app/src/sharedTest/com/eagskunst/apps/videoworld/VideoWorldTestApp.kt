@@ -15,7 +15,7 @@ import timber.log.Timber
  * Created by eagskunst in 18/6/2020.
  */
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-class VideoWorldTestApp: Application(){
+class VideoWorldTestApp : Application() {
 
     companion object {
         lateinit var instance: VideoWorldTestApp
@@ -36,5 +36,4 @@ class VideoWorldTestApp: Application(){
     internal fun injectModules(modules: List<Module>) {
         loadKoinModules(modules)
     }
-
 }

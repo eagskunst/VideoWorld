@@ -1,20 +1,22 @@
 package com.eagskunst.apps.videoworld.utils
 
 import androidx.lifecycle.LifecycleOwner
-import androidx.work.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import dagger.Reusable
-import timber.log.Timber
-import java.util.*
+import java.util.UUID
 import javax.inject.Inject
+import timber.log.Timber
 
 /**
  * Created by eagskunst in 5/5/2020.
  */
 @Reusable
-class WorkStateHandler @Inject constructor(private val workManager: WorkManager){
-
+class WorkStateHandler @Inject constructor(private val workManager: WorkManager) {
 
     /**
      * Starts a [VideoDownloadWorker]. All works started here add the [ClipResponse.getClipFilename]
@@ -48,7 +50,7 @@ class WorkStateHandler @Inject constructor(private val workManager: WorkManager)
      * @param lifecycleOwner: The lifecycle owner of the entity that wants to observe the work
      * @param [onWorkStateChange]: Higher order function to execute when the [WorkInfo] changes
      */
-    fun observeWorkById(workId: UUID, lifecycleOwner: LifecycleOwner, onWorkStateChange:(work: WorkInfo) -> Unit) {
+    fun observeWorkById(workId: UUID, lifecycleOwner: LifecycleOwner, onWorkStateChange: (work: WorkInfo) -> Unit) {
         workManager.getWorkInfoByIdLiveData(workId)
             .observe(lifecycleOwner, androidx.lifecycle.Observer {
                 val work = it ?: return@Observer
@@ -60,9 +62,7 @@ class WorkStateHandler @Inject constructor(private val workManager: WorkManager)
      * Cancels the work attached to a given Clip.
      * @param clip: Holds the Work to cancel's tag from [ClipResponse.getClipFilename]
      */
-    fun cancelDownloadWork(clip: ClipResponse){
+    fun cancelDownloadWork(clip: ClipResponse) {
         workManager.cancelAllWorkByTag(clip.getClipFilename())
     }
-
-
 }

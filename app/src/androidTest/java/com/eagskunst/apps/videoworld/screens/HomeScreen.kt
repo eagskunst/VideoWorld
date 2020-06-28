@@ -11,7 +11,7 @@ import com.eagskunst.apps.videoworld.R
 /**
  * Created by eagskunst in 18/6/2020.
  */
-class HomeScreen: Screen<HomeScreen>() {
+class HomeScreen : Screen<HomeScreen>() {
     val streamerNameTv = KTextView { withId(R.id.streamerLoginTv) }
     val streamerDescp = KTextView { withId(R.id.streamerDescpTv) }
     val streamerCount = KTextView { withId(R.id.streamerViewCountTv) }

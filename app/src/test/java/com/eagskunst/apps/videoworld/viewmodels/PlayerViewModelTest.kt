@@ -40,8 +40,8 @@ class PlayerViewModelTest {
     }
 
     @Test
-    fun assertInitialStateIsNull(){
-        assert (
+    fun assertInitialStateIsNull() {
+        assert(
             viewModel.playerStateLiveData.value == null
         )
     }
@@ -55,7 +55,6 @@ class PlayerViewModelTest {
         assertThat(currentState, `is`(expectedState))
     }
 
-
     @Test
     fun changeState_toSecondState_assertIsEqualToLiveData() {
         viewModel.changePlayerState(secondState)
@@ -65,7 +64,6 @@ class PlayerViewModelTest {
         assertThat(currentState, `is`(expectedState))
     }
 
-
     @Test
     fun changeState_withEventListener_toSecondState_assertIsEqualToLiveData() {
         val listener = viewModel.createPlayerListener(secondState)
@@ -74,7 +72,6 @@ class PlayerViewModelTest {
         val expectedState = secondState.copy(currentPosition = secondState.currentPosition + 1)
         val currentState = viewModel.playerStateLiveData.getOrAwaitValue()
 
-        assertThat(currentState ,`is`(expectedState))
+        assertThat(currentState, `is`(expectedState))
     }
-
 }

@@ -8,13 +8,12 @@ import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class OrientationViewModel: BaseViewModel() {
+class OrientationViewModel : BaseViewModel() {
 
     private val _configData = MutableLiveData<Configuration>()
     val configData = _configData as LiveData<Configuration>
 
-    fun changeConfiguration(configuration: Configuration?){
+    fun changeConfiguration(configuration: Configuration?) {
         _configData.value = configuration
     }
-
 }
