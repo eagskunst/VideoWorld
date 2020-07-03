@@ -33,7 +33,7 @@ class VideoWorldTestApp : Application() {
         Timber.plant(Timber.DebugTree())
     }
 
-    internal fun injectModules(modules: List<Module>) {
-        loadKoinModules(modules)
+    internal fun injectModules(module: Module) {
+        loadKoinModules(module)
     }
 }

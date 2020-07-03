@@ -15,6 +15,15 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "com.eagskunst.apps.videoworld.CustomTestRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "enableParallelEpoxyProcessing":"true",
+                        "room.incremental":"true"
+                ]
+            }
+        }
     }
 
     buildTypes {

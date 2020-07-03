@@ -36,7 +36,7 @@ abstract class FragmentTestRule<F : Fragment> :
         val app = InstrumentationRegistry.getInstrumentation()
             .targetContext.applicationContext as VideoWorldTestApp
 
-        app.injectModules(getModules())
+        app.injectModules(getModule())
     }
 
     private fun createCommonMocks() {
@@ -45,7 +45,7 @@ abstract class FragmentTestRule<F : Fragment> :
 
     protected abstract fun createFragment(): F
 
-    protected abstract fun getModules(): List<Module>
+    protected abstract fun getModule(): Module
 
     fun launch() {
         launchActivity(Intent())
@@ -53,8 +53,8 @@ abstract class FragmentTestRule<F : Fragment> :
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)
-fun <F : Fragment> createRule(fragment: F, vararg module: Module): FragmentTestRule<F> =
+fun <F : Fragment> createRule(fragment: F, module: Module): FragmentTestRule<F> =
     object : FragmentTestRule<F>() {
         override fun createFragment(): F = fragment
-        override fun getModules(): List<Module> = module.toList()
+        override fun getModule(): Module = module
     }
