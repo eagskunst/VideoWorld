@@ -9,19 +9,30 @@ import androidx.arch.core.executor.testing.CountingTaskExecutorRule
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.agoda.kakao.screen.Screen.Companion.onScreen
+import com.eagskunst.apps.videoworld.ConditionRobot
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.VideoWorldTestApp
+import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.network.responses.clips.Pagination
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserResponse
 import com.eagskunst.apps.videoworld.builders.clipResponse
 import com.eagskunst.apps.videoworld.common.LiveDataHolder
+import com.eagskunst.apps.videoworld.getOrAwaitValue
 import com.eagskunst.apps.videoworld.rules.createRule
 import com.eagskunst.apps.videoworld.screens.ClipsListScreen
+import com.eagskunst.apps.videoworld.screens.recycler_items.ClipItem
+import com.eagskunst.apps.videoworld.screens.recycler_items.EmptinessItem
 import com.eagskunst.apps.videoworld.ui.fragments.ClipsListFragment
 import com.eagskunst.apps.videoworld.utils.Constants
 import com.eagskunst.apps.videoworld.utils.DownloadState
@@ -31,17 +42,25 @@ import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import com.eagskunst.apps.videoworld.viewmodels.TwitchViewModel
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.koin.android.ext.android.get
 import org.koin.dsl.module
+import timber.log.Timber
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by eagskunst in 28/6/2020.
  */
 private val STREAMER_NAME = "Rubius"
 private val STREAMER_ID = "MockID"
+private val INVALID_STREAMER_ID = "InvalidId"
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class ClipListFragmentTest {
@@ -49,6 +68,9 @@ class ClipListFragmentTest {
     private val liveDataHolder = LiveDataHolder()
     private val fragment = ClipsListFragment()
     lateinit var twitchViewModel: TwitchViewModel
+    lateinit var downloadViewModel: DownloadViewModel
+    lateinit var workStateHandler: WorkStateHandler
+    lateinit var clips: List<ClipResponse>
 
     @get:Rule
     val fragmentRule = createRule(fragment, module {
@@ -65,7 +87,7 @@ class ClipListFragmentTest {
             playerViewModel
         }
         single(override = true) {
-            val workStateHandler = mockk<WorkStateHandler>(relaxed = true)
+            workStateHandler = mockk<WorkStateHandler>(relaxed = true)
             workStateHandler
         }
     })
@@ -81,7 +103,7 @@ class ClipListFragmentTest {
     val countingTaskExecutorRule = CountingTaskExecutorRule()
 
     private fun mockTwitchViewModel(): TwitchViewModel {
-        val twitchViewModel = mockk<TwitchViewModel>(relaxed = true)
+        twitchViewModel = mockk<TwitchViewModel>(relaxed = true)
         val userResponse = mockk<UserResponse>(relaxed = true)
 
         every { userResponse.id } returns STREAMER_ID
@@ -91,11 +113,11 @@ class ClipListFragmentTest {
         val userDataResponse = UserDataResponse(listOf(userResponse))
         val userLiveData = MutableLiveData<UserDataResponse>(userDataResponse)
         val clipsLiveData = MutableLiveData<UserClipsResponse>()
-        val clips = (0..3).map {
+        clips = (0..3).map {
             clipResponse {
                 id = UUID.randomUUID().toString()
                 title = "Clip $it"
-                viewCount = (it+1) * 10000
+                viewCount = (it + 1) * 10000
                 createdAt = dates[it]
             }
         }
@@ -116,17 +138,18 @@ class ClipListFragmentTest {
             )
         }
 
+        every { twitchViewModel.getUserClips(INVALID_STREAMER_ID) }.answers {
+            clipsLiveData.postValue(UserClipsResponse(listOf(), Pagination("0")))
+        }
+
         liveDataHolder.mockForBaseViewModel(twitchViewModel)
-        this.twitchViewModel = twitchViewModel
         return twitchViewModel
     }
 
     private fun mockDownloadViewModel(): DownloadViewModel {
-        val viewModel =  mockk<DownloadViewModel>(relaxed = true).also {
-            liveDataHolder.mockForBaseViewModel(it)
-        }
+        val viewModel = DownloadViewModel("path")
 
-        every { viewModel.getDownloadStateForClip(any()) } returns DownloadState.NOT_DOWNLOADED
+        downloadViewModel = viewModel
 
         return viewModel
     }
@@ -150,7 +173,7 @@ class ClipListFragmentTest {
             recycler {
                 isVisible()
                 hasSize(dates.size)
-                firstChild<ClipsListScreen.ClipItem> {
+                firstChild<ClipItem> {
                     isVisible()
 
                     titleTv {
@@ -179,8 +202,70 @@ class ClipListFragmentTest {
         }
     }
 
+    @Test
+    fun whenFragmentWithViews_checkDownloadStateChanges() {
+        val screen = onScreen<ClipsListScreen> {}
+        changeToDownloading(screen)
+        changeToDownloaded(screen)
+        changeToNotDownloaded(screen)
+    }
+
+    private fun changeToDownloading(screen: ClipsListScreen) {
+        screen.recycler {
+            firstChild<ClipItem> {
+                downloadBtn.perform { click() }
+                val clip = clips[0]
+                assert(downloadViewModel.getDownloadStateForClip(clip) == DownloadState.DOWNLOADING) {
+                    "The current download state for $clip is ${downloadViewModel.getDownloadStateForClip(
+                        clip
+                    )}"
+                }
+            }
+        }
+    }
+
+    private fun changeToDownloaded(screen: ClipsListScreen) {
+        screen.recycler {
+            firstChild<ClipItem> {
+                val clip = clips[0]
+                downloadViewModel.updateDownloadedVideosList(clip)
+                downloadBtn.perform { click() } //Request a model build to the EpoxyRv
+                assert(downloadViewModel.getDownloadStateForClip(clip) == DownloadState.DOWNLOADED) {
+                    "The current download state for $clip is ${downloadViewModel.getDownloadStateForClip(
+                        clip
+                    )}"
+                }
+            }
+        }
+    }
+
+    private fun changeToNotDownloaded(screen: ClipsListScreen) {
+        screen.recycler {
+            firstChild<ClipItem> {
+                downloadBtn.perform { click() }
+                val clip = clips[0]
+                assert(downloadViewModel.getDownloadStateForClip(clip) == DownloadState.NOT_DOWNLOADED) {
+                    "The current download state for $clip is ${downloadViewModel.getDownloadStateForClip(
+                        clip
+                    )}"
+                }
+            }
+        }
+    }
+
+    @Test
+    fun whenFragmentWithNullVideosList_AssertEmptinessViewIsShown() {
+        ConditionRobot().waitUntil {
+            ::twitchViewModel.isInitialized
+        }
+        twitchViewModel.getUserClips(INVALID_STREAMER_ID)
+        onScreen<ClipsListScreen> {
+            recycler {
+                firstChild<EmptinessItem> {
+                    container.isVisible()
+                }
+            }
+        }
+    }
+
 }
-
-
-
-data class Temp(val bitmap: Bitmap)

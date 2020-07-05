@@ -10,6 +10,7 @@ import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
+import com.eagskunst.apps.videoworld.emptiness
 import com.eagskunst.apps.videoworld.progressBar
 import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
 import com.eagskunst.apps.videoworld.utils.DownloadState
@@ -59,26 +60,32 @@ class ClipsListFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_c
 
     private fun buildRecyclerView(binding: FragmentClipsBinding, res: UserClipsResponse?) {
         binding.clipsRv.withModels {
-            if (res == null)
-                progressBar { id("progress") }
-            else {
-                res.clipResponseList.forEach { clip ->
-                    val downloadState = downloadViewModel.getDownloadStateForClip(clip)
-                    clipInfoView {
-                        id(clip.id)
-                        clip(clip)
-                        downloadState(downloadState)
-                        viewClick { _, _, _, position ->
+            when {
+                res == null -> {
+                    progressBar { id("progress") }
+                }
+                res.clipResponseList.isEmpty() -> {
+                    emptiness { id("emptiness") }
+                }
+                else -> {
+                    res.clipResponseList.forEach { clip ->
+                        val downloadState = downloadViewModel.getDownloadStateForClip(clip)
+                        clipInfoView {
+                            id(clip.id)
+                            clip(clip)
+                            downloadState(downloadState)
+                            viewClick { _, _, _, position ->
 
-                            playerViewModel.changePlayerState(
-                                PlayerState(res.clipResponseList, position)
-                            )
+                                playerViewModel.changePlayerState(
+                                    PlayerState(res.clipResponseList, position)
+                                )
 
-                            findNavController().navigate(R.id.action_clipsFragment_to_clipFragment)
-                        }
+                                findNavController().navigate(R.id.action_clipsFragment_to_clipFragment)
+                            }
 
-                        downloadClick { _, _, _, _ ->
-                            handleDownloadAction(downloadState, clip)
+                            downloadClick { _, _, _, _ ->
+                                handleDownloadAction(downloadState, clip)
+                            }
                         }
                     }
                 }
