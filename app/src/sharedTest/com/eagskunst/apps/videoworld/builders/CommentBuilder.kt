@@ -8,13 +8,24 @@ import com.eagskunst.apps.videoworld.db.entities.Comment
  */
 class CommentBuilder {
 
+    var id: Int? = null
     var videoId = String()
     var content = String()
 
-    fun build() = Comment(
-        videoId = videoId,
-        content = content
-    )
+    fun build() =
+        if(id == null) {
+            Comment(
+                videoId = videoId,
+                content = content
+            )
+        }
+        else {
+            Comment(
+                id = id!!,
+                videoId = videoId,
+                content = content
+            )
+        }
 }
 
 @VisibleForTesting(otherwise = VisibleForTesting.NONE)

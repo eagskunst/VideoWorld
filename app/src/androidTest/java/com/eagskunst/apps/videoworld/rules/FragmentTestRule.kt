@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import com.eagskunst.apps.videoworld.VideoWorldTestApp
 import com.squareup.picasso.Picasso
+import io.mockk.MockKException
 import io.mockk.mockkStatic
 import org.koin.core.module.Module
 

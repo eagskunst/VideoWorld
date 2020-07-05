@@ -13,7 +13,7 @@
         android:padding="10dp"
         android:layout_margin="5dp"
         android:layout_weight="1"
-        android:hint="Write your comment here"
+        android:hint="@string/write_your_comment_here_hint"
         android:background="@drawable/divider"
         android:layout_gravity="center"
         android:textColor="@android:color/black"/>
