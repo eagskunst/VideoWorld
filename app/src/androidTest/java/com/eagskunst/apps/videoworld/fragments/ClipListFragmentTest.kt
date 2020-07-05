@@ -1,26 +1,10 @@
 package com.eagskunst.apps.videoworld.fragments
 
-import android.content.res.ColorStateList
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.PorterDuff
-import android.widget.ImageView
 import androidx.arch.core.executor.testing.CountingTaskExecutorRule
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.test.espresso.Espresso
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.IdlingResource
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.agoda.kakao.screen.Screen.Companion.onScreen
 import com.eagskunst.apps.videoworld.ConditionRobot
-import com.eagskunst.apps.videoworld.R
-import com.eagskunst.apps.videoworld.VideoWorldTestApp
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.app.network.responses.clips.Pagination
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
@@ -28,11 +12,11 @@ import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserResponse
 import com.eagskunst.apps.videoworld.builders.clipResponse
 import com.eagskunst.apps.videoworld.common.LiveDataHolder
-import com.eagskunst.apps.videoworld.getOrAwaitValue
 import com.eagskunst.apps.videoworld.rules.createRule
 import com.eagskunst.apps.videoworld.screens.ClipsListScreen
 import com.eagskunst.apps.videoworld.screens.recycler_items.ClipItem
 import com.eagskunst.apps.videoworld.screens.recycler_items.EmptinessItem
+import com.eagskunst.apps.videoworld.screens.recycler_items.ProgressItem
 import com.eagskunst.apps.videoworld.ui.fragments.ClipsListFragment
 import com.eagskunst.apps.videoworld.utils.Constants
 import com.eagskunst.apps.videoworld.utils.DownloadState
@@ -49,18 +33,17 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.koin.android.ext.android.get
 import org.koin.dsl.module
-import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
  * Created by eagskunst in 28/6/2020.
  */
-private val STREAMER_NAME = "Rubius"
-private val STREAMER_ID = "MockID"
-private val INVALID_STREAMER_ID = "InvalidId"
+private const val STREAMER_NAME = "Rubius"
+private const val STREAMER_ID = "MockID"
+private const val INVALID_STREAMER_ID = "InvalidId"
+private const val FOR_NULL_STREAMER_ID = "NullInvalidId"
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class ClipListFragmentTest {
@@ -130,12 +113,16 @@ class ClipListFragmentTest {
 
         every {
             twitchViewModel.clipsListExists()
-        } returns false
+        } returns true
 
         every { twitchViewModel.getUserClips(STREAMER_ID) }.answers {
             clipsLiveData.postValue(
                 UserClipsResponse(clips, Pagination("0"))
             )
+        }
+
+        every { twitchViewModel.getUserClips(FOR_NULL_STREAMER_ID) } answers {
+            clipsLiveData.postValue(null)
         }
 
         every { twitchViewModel.getUserClips(INVALID_STREAMER_ID) }.answers {
@@ -160,6 +147,11 @@ class ClipListFragmentTest {
         }
     }
 
+    @Before
+    fun setup() {
+        ConditionRobot().waitUntil { ::twitchViewModel.isInitialized }
+    }
+
     @Test
     fun whenInitialFragmentState_AssertToolbarTitleContainsStreamerName() {
         onScreen<ClipsListScreen> {
@@ -169,6 +161,7 @@ class ClipListFragmentTest {
 
     @Test
     fun whenInitialFragmentState_UpdateWithNewClips_AssertRecyclerViewHasViews() {
+        twitchViewModel.getUserClips(STREAMER_ID)
         onScreen<ClipsListScreen> {
             recycler {
                 isVisible()
@@ -204,6 +197,7 @@ class ClipListFragmentTest {
 
     @Test
     fun whenFragmentWithViews_checkDownloadStateChanges() {
+        twitchViewModel.getUserClips(STREAMER_ID)
         val screen = onScreen<ClipsListScreen> {}
         changeToDownloading(screen)
         changeToDownloaded(screen)
@@ -253,11 +247,21 @@ class ClipListFragmentTest {
         }
     }
 
+
     @Test
-    fun whenFragmentWithNullVideosList_AssertEmptinessViewIsShown() {
-        ConditionRobot().waitUntil {
-            ::twitchViewModel.isInitialized
+    fun whenFragmentWithNullVideosList_AssertProgressBarIsShown() {
+        twitchViewModel.getUserClips(FOR_NULL_STREAMER_ID)
+        onScreen<ClipsListScreen> {
+            recycler {
+                firstChild<ProgressItem> {
+                    progressBar.isVisible()
+                }
+            }
         }
+    }
+
+    @Test
+    fun whenFragmentWithEmptyVideosList_AssertEmptinessViewIsShown() {
         twitchViewModel.getUserClips(INVALID_STREAMER_ID)
         onScreen<ClipsListScreen> {
             recycler {

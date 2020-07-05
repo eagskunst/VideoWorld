@@ -6,6 +6,7 @@ import com.agoda.kakao.toolbar.KToolbar
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.screens.recycler_items.ClipItem
 import com.eagskunst.apps.videoworld.screens.recycler_items.EmptinessItem
+import com.eagskunst.apps.videoworld.screens.recycler_items.ProgressItem
 
 /**
  * Created by eagskunst in 28/6/2020.
@@ -15,6 +16,7 @@ class ClipsListScreen : Screen<ClipsListScreen>() {
     val recycler = KRecyclerView({ withId(R.id.clipsRv) },
         {
             itemType(::ClipItem)
+            itemType(::ProgressItem)
             itemType(::EmptinessItem)
         }
     )
