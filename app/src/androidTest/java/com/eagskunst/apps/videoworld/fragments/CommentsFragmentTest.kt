@@ -14,13 +14,13 @@ import com.eagskunst.apps.videoworld.db.entities.Comment
 import com.eagskunst.apps.videoworld.rules.createRule
 import com.eagskunst.apps.videoworld.screens.AddCommentScreen
 import com.eagskunst.apps.videoworld.screens.CommentsScreen
+import com.eagskunst.apps.videoworld.screens.recycler_items.CommentItem
+import com.eagskunst.apps.videoworld.screens.recycler_items.EmptinessItem
 import com.eagskunst.apps.videoworld.ui.fragments.CommentsFragment
 import com.eagskunst.apps.videoworld.viewmodels.CommentsViewModel
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -97,12 +97,11 @@ class CommentsFragmentTest {
 
     @Test
     fun whenClickingCommentsContainer_ClickIt_AssertBottomSheetIsShown() {
-        //val bottomSheetScreen = AddCommentScreen()
         onScreen<CommentsScreen> {
             addCommentText.isVisible()
             addCommentContainer.isVisible()
 
-            addCommentContainer.click()
+            showAddCommentContainer(this)
 
             countingTaskExecutorRule.drainTasks(5, TimeUnit.SECONDS)
             onScreen<AddCommentScreen> {
@@ -110,6 +109,43 @@ class CommentsFragmentTest {
                 sendBtn.isVisible()
                 sendBtn.isDisabled()
             }
+        }
+    }
+
+    @Test
+    fun whenInitialFragmentState_withClipId1_AndNoComments_AssertEmptinessIsShown() {
+        onScreen<CommentsScreen> {
+            recycler {
+                firstChild<EmptinessItem> {
+                    container.isVisible()
+                }
+            }
+        }
+    }
+
+    @Test
+    fun whenInitialFragmentState_withClipId1_AndNoComments_AddAComment_AssertIsVisible() {
+        onScreen<CommentsScreen> {
+            showAddCommentContainer(this)
+            sendComment(commentsContent[0])
+            recycler {
+                firstChild<CommentItem> {
+                    content.hasText(commentsContent[0])
+                    deleteBtn.isVisible()
+                }
+            }
+        }
+    }
+
+    private fun showAddCommentContainer(commentsScreen: CommentsScreen) {
+        commentsScreen.addCommentContainer.click()
+    }
+
+    private fun sendComment(content: String) {
+        onScreen<AddCommentScreen> {
+            commentEt.typeText(content)
+            sendBtn.isEnabled()
+            sendBtn.click()
         }
     }
 
