@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.eagskunst.apps.videoworld.app.network.responses.clips.Pagination
 import com.eagskunst.apps.videoworld.app.network.responses.clips.UserClipsResponse
 import com.eagskunst.apps.videoworld.app.network.responses.user.UserDataResponse
 import com.eagskunst.apps.videoworld.app.repositories.TwitchRepository
@@ -14,7 +15,8 @@ import kotlinx.coroutines.launch
 /**
  * Created by eagskunst in 1/5/2020.
  */
-class TwitchViewModel @Inject constructor(private val repository: TwitchRepository) : BaseViewModel() {
+class TwitchViewModel @Inject constructor(private val repository: TwitchRepository) :
+    BaseViewModel() {
 
     private val _userData = MutableLiveData<UserDataResponse>()
     val userData = _userData as LiveData<UserDataResponse>
@@ -54,7 +56,10 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
         }
 
         viewModelScope.launch {
-            _userClips.value = repository.getUserClips(userId, this@TwitchViewModel)
+            _userClips.value =
+                repository.getUserClips(userId, this@TwitchViewModel) ?: UserClipsResponse(
+                    listOf(), Pagination("")
+                )
         }
     }
 }
