@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit
  */
 private const val CLIP_1_ID = "1"
 private const val CLIP_2_ID = "2"
+
 @RunWith(AndroidJUnit4ClassRunner::class)
 class CommentsFragmentTest {
 
@@ -84,6 +85,17 @@ class CommentsFragmentTest {
             }
             commentsClip1Ld.postValue(listOf(comment))
         }
+        every {
+            viewModel.deleteComment(
+                Comment(
+                    content = commentsContent[0],
+                    videoId = CLIP_1_ID
+                )
+            )
+        } answers {
+            commentsClip1Ld.postValue(listOf())
+        }
+
         commentsViewModel = viewModel
         return viewModel
     }
@@ -136,6 +148,27 @@ class CommentsFragmentTest {
             }
         }
     }
+
+    @Test
+    fun whenInitialFragmentState_withClipId1_AddAComment_ThenRemoveIt_AssertEmptinessIsShown() {
+        onScreen<CommentsScreen> {
+            showAddCommentContainer(this)
+            sendComment(commentsContent[0])
+            recycler {
+                //Asserting the comment exist
+                firstChild<CommentItem> {
+                    content.hasText(commentsContent[0])
+                    deleteBtn.isVisible()
+                    deleteBtn.click()
+                }
+                countingTaskExecutorRule.drainTasks(5, TimeUnit.SECONDS)
+                firstChild<EmptinessItem> {
+                    container.isVisible()
+                }
+            }
+        }
+    }
+
 
     private fun showAddCommentContainer(commentsScreen: CommentsScreen) {
         commentsScreen.addCommentContainer.click()
