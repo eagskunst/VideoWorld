@@ -14,6 +14,7 @@ import com.eagskunst.apps.videoworld.screens.ClipsListScreen
 import com.eagskunst.apps.videoworld.screens.recycler_items.ClipItem
 import com.eagskunst.apps.videoworld.ui.fragments.SubClipsFragment
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
+import com.google.android.exoplayer2.Player
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
@@ -30,6 +31,7 @@ class SubClipFragmentTest {
     private val liveDataHolder = LiveDataHolder()
     val fragment = SubClipsFragment()
     val clipsSize = 20
+    var listener: Player.EventListener? = null
     lateinit var playerViewModel: PlayerViewModel
 
     val dates = listOf(
@@ -68,9 +70,18 @@ class SubClipFragmentTest {
         every { playerViewModel.changePlayerState(playerState.copy(currentPosition = 2)) } answers {
             stateLiveData.postValue(playerState.copy(currentPosition = 2))
         }
+        every { playerViewModel.changePlayerState(playerState.copy(currentPosition = 1)) } answers {
+            stateLiveData.postValue(playerState.copy(currentPosition = 1))
+        }
         every { playerViewModel.changePlayerState(playerState.copy(currentPosition = clipsSize - 1)) } answers {
             stateLiveData.postValue(playerState.copy(currentPosition = clipsSize - 1))
         }
+
+        every { playerViewModel.createPlayerListener(playerState) } answers  {
+            callOriginal()
+        }
+
+        listener = playerViewModel.createPlayerListener(playerState)
 
         return playerViewModel.also {
             liveDataHolder.mockForBaseViewModel(it)
@@ -130,6 +141,30 @@ class SubClipFragmentTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun whenFirstClipIsSelected_AndTheListenerUpdates_AssertSecondClipsIsSelected() {
+        onScreen<ClipsListScreen> {
+            recycler {
+                firstChild<ClipItem> {
+                    hasBackgroundColor(R.color.colorAccent)
+                }
+                childAt<ClipItem>(1) {
+                    hasBackgroundColor(R.color.colorDefaultBg)
+                }
+                listener!!.onPlayerStateChanged(true, Player.STATE_ENDED)
+
+                idle(duration = 500)
+                firstChild<ClipItem> {
+                    hasBackgroundColor(R.color.colorDefaultBg)
+                }
+                childAt<ClipItem>(1) {
+                    hasBackgroundColor(R.color.colorAccent)
+                }
+            }
+        }
+        listener = null
     }
 
 }
