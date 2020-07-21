@@ -5,6 +5,7 @@ package com.eagskunst.apps.videoworld.utils
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -129,11 +130,9 @@ val Int.dp get() = (this /
 val Int.px get() = (this *
         Resources.getSystem().displayMetrics.density).toInt()
 
-fun Activity.isInPortrait() = requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+fun Activity.configuration() = resources.configuration
+
+fun Activity.isInPortrait() = configuration().orientation == Configuration.ORIENTATION_PORTRAIT
 
 val WorkInfo.State.isCancelled get() =
     this == WorkInfo.State.CANCELLED || this == WorkInfo.State.FAILED

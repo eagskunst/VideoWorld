@@ -27,10 +27,12 @@
         </activity>
         <activity
             android:theme="@style/AppTheme"
-            android:name="androidx.fragment.app.FragmentActivity"/>
+            android:name="androidx.fragment.app.FragmentActivity"
+            android:configChanges="screenSize|orientation|keyboardHidden"
+            />
         <activity
             android:name=".MainActivity"
-            android:configChanges="screenSize|orientation|keyboardHidden"></activity>
+            android:configChanges="screenSize|orientation|keyboardHidden" />
     </application>
 
 </manifest>
