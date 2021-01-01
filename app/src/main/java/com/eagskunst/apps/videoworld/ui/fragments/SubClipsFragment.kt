@@ -6,8 +6,8 @@ import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
-import com.eagskunst.apps.videoworld.ui.view_holders.ClipInfoView
-import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
+import com.eagskunst.apps.videoworld.ui.viewholders.ClipInfoView
+import com.eagskunst.apps.videoworld.ui.viewholders.clipInfoView
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel

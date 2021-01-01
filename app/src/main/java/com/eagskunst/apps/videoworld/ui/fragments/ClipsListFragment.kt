@@ -12,7 +12,7 @@ import com.eagskunst.apps.videoworld.app.workers.VideoDownloadWorker
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
 import com.eagskunst.apps.videoworld.emptiness
 import com.eagskunst.apps.videoworld.progressBar
-import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
+import com.eagskunst.apps.videoworld.ui.viewholders.clipInfoView
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.WorkStateHandler
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment

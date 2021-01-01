@@ -57,9 +57,7 @@ class TwitchViewModel @Inject constructor(private val repository: TwitchReposito
 
         viewModelScope.launch {
             _userClips.value =
-                repository.getUserClips(userId, this@TwitchViewModel) ?: UserClipsResponse(
-                    listOf(), Pagination("")
-                )
+                repository.getUserClips(userId, this@TwitchViewModel)
         }
     }
 }
