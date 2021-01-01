@@ -30,24 +30,34 @@ There are 5 main folders: app, db, ui, utils.
 I made this app for practice/professional purposes, but PR's are welcome!
 
 ### Libraries and other stuff applied
-* Koin for dependency injection
-* Exoplayer + custom controls views
-* Auto-playing feature
-* ViewPager2
-* Room
-* Data binding
-* Material Components
-* ViewModel and LiveData
-* Jetpack navigation
-* Coroutines
-* Dagger2 for dependency injection (`with-dagger` branch)
-* Assisted injection (`with-dagger` branch)
-* Retrofit for REST API communication and to perform downloads
-* WorkManager + Coroutines + Notifications
-* Injection in a Work (`with-dagger` branch and main branch)
-* Epoxy
-* MVVM architecture + Repository pattern
-* State handling on configuration changes
+* Koin for dependency injection.
+* Exoplayer + custom controls views.
+* Auto-playing feature.
+* ViewPager2.
+* Room.
+* Data binding.
+* Material Components.
+* ViewModel and LiveData.
+* Jetpack navigation.
+* Coroutines.
+* Dagger2 for dependency injection (`with-dagger` branch).
+* Assisted injection (`with-dagger` branch).
+* Retrofit for REST API communication and to perform downloads.
+* WorkManager + Coroutines + Notifications.
+* Injection in a Work (`with-dagger` branch and main branch).
+* Epoxy.
+* MVVM architecture + Repository pattern.
+* State handling on configuration changes.
+* **Test**:
+    * MockK.
+    * Kakao.
+    * Espresso.
+    * Hamcrest.
+    * Fragment-testing.
+
+### Tests
+For unit tests, run `gradlew test` command.
+For instrumentation tests, run `gradlew connectedAndroidTest` command.
 
 ### Check the app!
 You could download the .apk file from the release tab.
