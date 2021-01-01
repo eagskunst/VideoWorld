@@ -6,14 +6,14 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import com.eagskunst.apps.videoworld.BuildConfig
 import com.eagskunst.apps.videoworld.utils.ApiKeys
+import java.io.File
+import java.util.concurrent.TimeUnit
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
-import java.io.File
-import java.util.concurrent.TimeUnit
 
 /**
  * Created by eagskunst in 30/4/2020.
@@ -29,11 +29,11 @@ val networkModule = module {
 
     single { File(androidContext().cacheDir, "okhttp_cache") }
 
-    single { Cache(get(), 10*1000*1000) }
+    single { Cache(get(), 10 * 1000 * 1000) }
 
     single {
         OkHttpClient.Builder()
-            .addInterceptor( get<HttpLoggingInterceptor>() )
+            .addInterceptor(get<HttpLoggingInterceptor>())
             .addInterceptor { chain ->
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader(
@@ -41,10 +41,9 @@ val networkModule = module {
                         "VideoWorld-ANDROID " + " BUILD VERSION: " + BuildConfig.VERSION_NAME + " SMARTPHONE: " + Build.MODEL + " ANDROID VERSION: " + Build.VERSION.RELEASE
                     )
                     .addHeader("Content-Type", "application/json")
-                if(hasNetwork(androidContext())) {
+                if (hasNetwork(androidContext())) {
                     requestBuilder.addHeader("Cache-Control", "public, max-age=" + 5)
-                }
-                else {
+                } else {
                     requestBuilder.addHeader("Cache-Control", "public, only-if-cached, max-stale=" + 60 * 60 * 24 * 7).build()
                 }
                 val request = requestBuilder.build()
@@ -55,7 +54,7 @@ val networkModule = module {
             .cache(get())
     }
 
-    factory (named(KoinQualifiers.TwitchApi)) {
+    factory(named(KoinQualifiers.TwitchApi)) {
         get<OkHttpClient.Builder>().addInterceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
                 .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)
@@ -65,7 +64,7 @@ val networkModule = module {
         }.build()
     }
 
-    factory (named(KoinQualifiers.TwitchAuth)) {
+    factory(named(KoinQualifiers.TwitchAuth)) {
         get<OkHttpClient.Builder>().addInterceptor { chain ->
             val requestBuilder = chain.request().newBuilder()
                 .addHeader("Client-ID", ApiKeys.TWITCH_CLIENT_ID)
@@ -80,7 +79,7 @@ val networkModule = module {
 private fun hasNetwork(context: Context): Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        val nw      = connectivityManager.activeNetwork ?: return false
+        val nw = connectivityManager.activeNetwork ?: return false
         val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
         return when {
             actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
@@ -92,4 +91,3 @@ private fun hasNetwork(context: Context): Boolean {
         return nwInfo.isConnected
     }
 }
-

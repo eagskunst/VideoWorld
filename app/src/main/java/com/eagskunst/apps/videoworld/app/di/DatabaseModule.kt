@@ -5,7 +5,6 @@ import com.eagskunst.apps.videoworld.db.VideoWorldDatabase
 import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
-
 /**
  * Created by eagskunst in 5/5/2020.
  */
@@ -19,6 +18,6 @@ val databaseModule = module {
         .build()
     }
     single {
-       get<VideoWorldDatabase>().commentsDao()
+        get<VideoWorldDatabase>().commentsDao()
     }
 }

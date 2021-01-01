@@ -5,6 +5,7 @@ package com.eagskunst.apps.videoworld.utils
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -17,12 +18,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
-import com.google.android.exoplayer2.PlaybackParameters
-import com.google.android.exoplayer2.SimpleExoPlayer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.log
 
@@ -30,43 +31,41 @@ import kotlin.math.log
  * Created by eagskunst in 1/5/2020.
  */
 
-fun SimpleExoPlayer.changeSpeed(speed: Float){
+fun SimpleExoPlayer.changeSpeed(speed: Float) {
     setPlaybackParameters(PlaybackParameters(speed))
 }
 
-
-fun SimpleExoPlayer.updatePosition(newPosition: Int){
+fun SimpleExoPlayer.updatePosition(newPosition: Int) {
     seekTo(currentPosition + newPosition)
 }
-
 
 fun Context.toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 
 /**
  * Start of functions extracted from Paulo's talk
  */
-//val Activity.injector get() = (application as ComponentProvider).appComponent
-//val Fragment.injector get() = requireActivity().injector
-
+// val Activity.injector get() = (application as ComponentProvider).appComponent
+// val Fragment.injector get() = requireActivity().injector
 
 inline fun <reified T : ViewModel> FragmentActivity.viewModel(
-    crossinline provider: () -> T) = viewModels<T> {
+    crossinline provider: () -> T
+) = viewModels<T> {
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) = provider() as T
     }
 }
-
 
 inline fun <reified T : ViewModel> Fragment.activityViewModel(
-    crossinline provider: () -> T) = activityViewModels<T> {
+    crossinline provider: () -> T
+) = activityViewModels<T> {
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) = provider() as T
     }
 }
 
-
 inline fun <reified T : ViewModel> Fragment.viewModel(
-    crossinline provider: () -> T) = viewModels<T> {
+    crossinline provider: () -> T
+) = viewModels<T> {
     object : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>) = provider() as T
     }
@@ -85,11 +84,9 @@ fun Activity.hideKeyboard() {
     window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 }
 
-
-fun Fragment.hideKeyboard(){
+fun Fragment.hideKeyboard() {
     requireActivity().hideKeyboard()
 }
-
 
 fun Activity.showSnackbar(msg: String) {
     this.currentFocus?.let {
@@ -97,13 +94,11 @@ fun Activity.showSnackbar(msg: String) {
     }
 }
 
-
 fun Fragment.showSnackbar(msg: String) {
     view?.let { Snackbar.make(it, msg, Snackbar.LENGTH_SHORT).show() }
 }
 
-
-fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
+fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int) {
     val divider = DividerItemDecoration(
         context,
         DividerItemDecoration.VERTICAL
@@ -118,31 +113,26 @@ fun RecyclerView.setDivider(@DrawableRes dividerDrawable: Int){
     }
 }
 
-
 fun Int.formatInt(): String {
     val digits = log(this.toFloat(), 10.toFloat()).toInt() + 1
-    if(digits < 4)
+    if (digits < 4)
         return this.toString()
     val digitsStr = this.toString()
-    if (digits in 4..6){
+    if (digits in 4..6) {
         return "${digitsStr[0]}K"
     }
 
     return "${digitsStr[0]}M"
 }
 
-
 val Int.dp get() = (this /
         Resources.getSystem().displayMetrics.density).toInt()
 val Int.px get() = (this *
         Resources.getSystem().displayMetrics.density).toInt()
 
+fun Activity.configuration() = resources.configuration
 
-fun Activity.isInPortrait() = requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT ||
-        requestedOrientation == ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+fun Activity.isInPortrait() = configuration().orientation == Configuration.ORIENTATION_PORTRAIT
 
 val WorkInfo.State.isCancelled get() =
     this == WorkInfo.State.CANCELLED || this == WorkInfo.State.FAILED

@@ -1,4 +1,4 @@
-package com.eagskunst.apps.videoworld.ui.view_holders
+package com.eagskunst.apps.videoworld.ui.viewholders
 
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -31,7 +31,7 @@ abstract class ClipInfoView : EpoxyModelWithHolder<ClipInfoView.Holder>() {
 
     override fun bind(holder: Holder) {
         super.bind(holder)
-        with(holder.binding){
+        with(holder.binding) {
             backgroundColor = this@ClipInfoView.backgroundColor
             viewClick = this@ClipInfoView.viewClick
             clip = this@ClipInfoView.clip
@@ -53,7 +53,7 @@ abstract class ClipInfoView : EpoxyModelWithHolder<ClipInfoView.Holder>() {
         }
     }
 
-    inner class Holder: EpoxyHolder() {
+    inner class Holder : EpoxyHolder() {
         lateinit var binding: ViewHolderClipInfoBinding
         override fun bindView(itemView: View) {
             binding = ViewHolderClipInfoBinding.bind(itemView)

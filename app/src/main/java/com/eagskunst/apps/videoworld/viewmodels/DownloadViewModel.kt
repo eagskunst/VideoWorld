@@ -1,21 +1,15 @@
 package com.eagskunst.apps.videoworld.viewmodels
 
-import android.content.Context
 import com.eagskunst.apps.videoworld.app.network.responses.clips.ClipResponse
 import com.eagskunst.apps.videoworld.utils.DownloadState
 import com.eagskunst.apps.videoworld.utils.base.BaseViewModel
 import java.io.File
-import javax.inject.Inject
 
 /**
  * Created by eagskunst in 3/5/2020.
- * Context is only used for getting the filesDir is path. Do not worry about
- * leaks of the variable as is only used in the constructor scope
  */
-class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
+class DownloadViewModel(private val filesDirPath: String) : BaseViewModel() {
 
-
-    private val filesDirPath: String = context.filesDir.path
     private var downloadedVideosList = listOf<ClipResponse>()
     private val downloadingVideosList = mutableListOf<ClipResponse>()
 
@@ -45,18 +39,16 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
      * clip. [DownloadState.DOWNLOADING] if the downloadingVideosList contains the clip. Else [DownloadState.NOT_DOWNLOADED]
      */
     fun getDownloadStateForClip(clip: ClipResponse): Int {
-        return when {
-            downloadedVideosList.contains(clip) -> DownloadState.DOWNLOADED
-            downloadingVideosList.contains(clip) -> DownloadState.DOWNLOADING
+        return when (clip) {
+            in downloadedVideosList -> DownloadState.DOWNLOADED
+            in downloadingVideosList -> DownloadState.DOWNLOADING
             else -> DownloadState.NOT_DOWNLOADED
         }
     }
 
+    fun addVideoToDownloadingList(clip: ClipResponse) = downloadingVideosList.add(clip)
 
-    fun addVideoToDownloadList(clip: ClipResponse) = downloadingVideosList.add(clip)
-
-
-    fun removeVideoFromDownloadList(clip: ClipResponse) {
+    fun removeVideoFromDownloadingList(clip: ClipResponse) {
         downloadingVideosList.remove(clip)
     }
 
@@ -87,17 +79,16 @@ class DownloadViewModel @Inject constructor(context: Context): BaseViewModel() {
      * @param clip: The clip of the file
      * @return [File]
      */
-    fun getClipFile(clip: ClipResponse) = File("${filesDirPath}/${clip.getClipFilename()}")
+    fun getClipFile(clip: ClipResponse) = File("$filesDirPath/${clip.getClipFilename()}")
 
     /**
      * @param clip: The clip to be shown.
      * @return The File path of the video or the URL to the video file.
      */
     fun getClipUrl(clip: ClipResponse): String {
-        return if( downloadedVideosList.contains(clip) )
+        return if (downloadedVideosList.contains(clip))
             getClipFile(clip).path
         else
             clip.getClipUrl()
     }
-
 }

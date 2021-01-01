@@ -6,8 +6,8 @@ import androidx.lifecycle.Observer
 import com.eagskunst.apps.videoworld.R
 import com.eagskunst.apps.videoworld.app.models.PlayerState
 import com.eagskunst.apps.videoworld.databinding.FragmentClipsBinding
-import com.eagskunst.apps.videoworld.ui.view_holders.ClipInfoView
-import com.eagskunst.apps.videoworld.ui.view_holders.clipInfoView
+import com.eagskunst.apps.videoworld.ui.viewholders.ClipInfoView
+import com.eagskunst.apps.videoworld.ui.viewholders.clipInfoView
 import com.eagskunst.apps.videoworld.utils.base.BaseFragment
 import com.eagskunst.apps.videoworld.viewmodels.PlayerViewModel
 import org.koin.android.viewmodel.ext.android.sharedViewModel
@@ -16,7 +16,7 @@ import timber.log.Timber
 /**
  * Created by eagskunst in 3/5/2020.
  */
-class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
+class SubClipsFragment : BaseFragment<FragmentClipsBinding>(R.layout.fragment_clips) {
 
     override val bindingFunction: (view: View) -> FragmentClipsBinding
         get() = FragmentClipsBinding::bind
@@ -27,7 +27,7 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
         super.onViewCreated(view, savedInstanceState)
         binding.clipsToolbar.visibility = View.GONE
         playerViewModel.playerStateLiveData.observe(viewLifecycleOwner, Observer { state ->
-            if(state == null)
+            if (state == null)
                 return@Observer
             Timber.d("Binding new player state into sub clips list")
             bindClips(state)
@@ -53,12 +53,12 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
     private fun bindClips(playerState: PlayerState) {
         binding.clipsRv.withModels {
             playerState.clipsList.forEach { clip ->
-                //Binding clip into view holder
+                // Binding clip into view holder
                 clipInfoView {
                     id(clip.id)
                     clip(clip)
                     viewClick { _, _, _, position ->
-                        if(playerState.currentPosition != position){
+                        if (playerState.currentPosition != position) {
                             playerViewModel.changePlayerState(
                                 playerState.copy(
                                     currentPosition = position
@@ -71,7 +71,7 @@ class SubClipsFragment: BaseFragment<FragmentClipsBinding>(R.layout.fragment_cli
                         else R.color.colorDefaultBg
 
                     backgroundColor(color)
-                    downloadClick {  _ -> /**/ }
+                    downloadClick { _ -> /**/ }
                 }
             }
         }

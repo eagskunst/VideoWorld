@@ -1,6 +1,5 @@
 package com.eagskunst.apps.videoworld.app.network.responses.auth
 
-
 import com.squareup.moshi.Json
 
 data class AuthTokenResponse(

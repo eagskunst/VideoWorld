@@ -1,6 +1,5 @@
 package com.eagskunst.apps.videoworld.app.network.responses.user
 
-
 import com.eagskunst.apps.videoworld.app.network.api.UserApi
 import com.squareup.moshi.Json
 /**
